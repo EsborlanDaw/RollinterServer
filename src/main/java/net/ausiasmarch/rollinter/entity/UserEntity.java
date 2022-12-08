@@ -197,9 +197,6 @@ public class UserEntity implements Serializable {
         return usertype;
     }
 
-
-
-
     public void setUsertype(UsertypeEntity usertype) {
         this.usertype = usertype;
     }
@@ -207,8 +204,6 @@ public class UserEntity implements Serializable {
     public int getRoutes() {
         return routes.size();
     }
-
-
 
 
     @PreRemove
