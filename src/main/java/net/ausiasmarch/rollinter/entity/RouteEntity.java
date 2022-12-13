@@ -31,27 +31,33 @@ public class RouteEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @OneToMany(mappedBy = "zone", fetch = FetchType.LAZY)
-    private final List <ZoneEntity> zones;
+    private String name;
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    @OneToMany(mappedBy = "route", fetch = FetchType.LAZY)
+    private final List <CoordinatesEntity> coordinates;
 
     private String dificulty;
     private String time;
-    
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "id_city")
-    private CityEntity city;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "id_user")
     private UserEntity user;
 
-    public RouteEntity(List<ZoneEntity> zones) {
-        this.zones = new ArrayList<>();
+    public RouteEntity() {
+        this.coordinates = new ArrayList<>();
     }
 
-    public RouteEntity(Long id, ZoneEntity zones) {
+    public RouteEntity(Long id) {
         this.id = id;
-        this.zones = new ArrayList<>();
+        this.coordinates = new ArrayList<>();
     }
 
     public Long getId() {
@@ -63,7 +69,7 @@ public class RouteEntity {
     }
 
     public int getZones() {
-        return zones.size();
+        return coordinates.size();
     }
 
     public String getDificulty() {
@@ -82,19 +88,19 @@ public class RouteEntity {
         this.time = time;
     }
 
-    
-
-    public void setCity(CityEntity city) {
-        this.city = city;
-    }
 
     public void setUser(UserEntity user) {
         this.user = user;
     }
 
+    public int getCoordinate() {
+        return coordinates.size();
+    }
+
+
     @PreRemove
     public void nullify() {
-        this.zones.forEach(c -> c.setRoute(null));
+        this.coordinates.forEach(c -> c.setRoute(null));
     }
 
 }

@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: localhost:3306
--- Tiempo de generación: 01-12-2022 a las 21:49:33
+-- Tiempo de generación: 13-12-2022 a las 16:07:54
 -- Versión del servidor: 10.4.25-MariaDB
 -- Versión de PHP: 8.1.12
 
@@ -24,24 +24,14 @@ SET time_zone = "+00:00";
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla `city`
+-- Estructura de tabla para la tabla `coordinates`
 --
 
-CREATE TABLE `city` (
+CREATE TABLE `coordinates` (
   `id` bigint(20) NOT NULL,
-  `name` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
-  `id_country` varchar(255) COLLATE utf8_unicode_ci NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
-
--- --------------------------------------------------------
-
---
--- Estructura de tabla para la tabla `country`
---
-
-CREATE TABLE `country` (
-  `id` bigint(20) NOT NULL,
-  `name` varchar(255) COLLATE utf8_unicode_ci NOT NULL
+  `x` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
+  `y` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
+  `id_route` bigint(20) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 -- --------------------------------------------------------
@@ -103,33 +93,14 @@ CREATE TABLE `usertype` (
   `name` varchar(255) COLLATE utf8_unicode_ci NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
--- --------------------------------------------------------
-
---
--- Estructura de tabla para la tabla `zone`
---
-
-CREATE TABLE `zone` (
-  `id` bigint(20) NOT NULL,
-  `street` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
-  `neighborhood` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
-  `id_route` bigint(20) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
-
 --
 -- Índices para tablas volcadas
 --
 
 --
--- Indices de la tabla `city`
+-- Indices de la tabla `coordinates`
 --
-ALTER TABLE `city`
-  ADD PRIMARY KEY (`id`);
-
---
--- Indices de la tabla `country`
---
-ALTER TABLE `country`
+ALTER TABLE `coordinates`
   ADD PRIMARY KEY (`id`);
 
 --
@@ -148,7 +119,9 @@ ALTER TABLE `route`
 -- Indices de la tabla `user`
 --
 ALTER TABLE `user`
-  ADD PRIMARY KEY (`id`);
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `user_ibfk_1` (`id_group`),
+  ADD KEY `id_usertype` (`id_usertype`);
 
 --
 -- Indices de la tabla `usertype`
@@ -157,26 +130,8 @@ ALTER TABLE `usertype`
   ADD PRIMARY KEY (`id`);
 
 --
--- Indices de la tabla `zone`
---
-ALTER TABLE `zone`
-  ADD PRIMARY KEY (`id`);
-
---
 -- AUTO_INCREMENT de las tablas volcadas
 --
-
---
--- AUTO_INCREMENT de la tabla `city`
---
-ALTER TABLE `city`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT de la tabla `country`
---
-ALTER TABLE `country`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT de la tabla `group`
@@ -203,10 +158,15 @@ ALTER TABLE `usertype`
   MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT de la tabla `zone`
+-- Restricciones para tablas volcadas
 --
-ALTER TABLE `zone`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT;
+
+--
+-- Filtros para la tabla `user`
+--
+ALTER TABLE `user`
+  ADD CONSTRAINT `user_ibfk_1` FOREIGN KEY (`id_group`) REFERENCES `group` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  ADD CONSTRAINT `user_ibfk_2` FOREIGN KEY (`id_usertype`) REFERENCES `usertype` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

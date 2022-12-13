@@ -10,16 +10,18 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.PreRemove;
 import javax.persistence.Table;
+
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @Entity
-@Table(name = "grouop")
+@Table(name = "team")
 @JsonIgnoreProperties({"hibernateLazyInitialize", "handler"})
 
-public class GroupEntity {
+public class TeamEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -27,15 +29,28 @@ public class GroupEntity {
     private Long id;
     private String name;
 
+    @OneToMany(mappedBy = "team", fetch = FetchType.LAZY)
+    private final List<UserEntity> users;
+
+    private LocalDateTime creationdate;
+
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "id_user")
     private UserEntity user;
 
-    @OneToMany(mappedBy = "group", fetch = FetchType.LAZY)
-    private final List<UserEntity> users;
 
 
-    public GroupEntity() {
+    public LocalDateTime getCreationdate() {
+        return creationdate;
+    }
+
+
+    public void setCreationdate(LocalDateTime creationdate) {
+        this.creationdate = creationdate;
+    }
+
+
+    public TeamEntity() {
         this.users = new ArrayList<>();
     }
 
@@ -60,18 +75,10 @@ public class GroupEntity {
         return users.size();
     }
 
-    public Long getUser() {
-        return user.getId();
-    }
-
-    public void setUser(UserEntity user) {
-        this.user = user;
-    }
-
     @PreRemove
     public void nullify(){
         this.users.forEach(c ->
-                                c.setGroup(null));                  
+                                c.setTeam(null));                  
     }
 
 

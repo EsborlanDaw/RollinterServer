@@ -23,33 +23,35 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 @Entity
 @Table(name = "user")
-@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
+@JsonIgnoreProperties({ "hibernateLazyInitializer", "handler" })
 public class UserEntity implements Serializable {
-    
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     private String name;
     private String surname1;
-    @Column(name = "last_name")
     private String surname2;
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
-    private LocalDateTime data_birth;
-    private String email;
+
+    //@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
+    private LocalDateTime datebirth;
+
+    private String gender;
     private String username;
+
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String password;
-    private String gender;
 
-
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "id_group")
-    private GroupEntity group;
+    private String email;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "id_usertype")
     private UsertypeEntity usertype;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "id_team")
+    private TeamEntity team;
 
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
     private final List<RouteEntity> routes;
@@ -80,118 +82,69 @@ public class UserEntity implements Serializable {
         this.name = name;
     }
 
-
-
-
     public String getSurname1() {
         return surname1;
     }
-
-
-
 
     public void setSurname1(String surname1) {
         this.surname1 = surname1;
     }
 
-
-
-
     public String getSurname2() {
         return surname2;
     }
-
-
-
 
     public void setSurname2(String surname2) {
         this.surname2 = surname2;
     }
 
-
-
-
-    public LocalDateTime getData_birth() {
-        return data_birth;
+    public LocalDateTime getDatebirth() {
+        return datebirth;
     }
 
-
-
-
-    public void setData_birth(LocalDateTime data_birth) {
-        this.data_birth = data_birth;
+    public void setDatebirth(LocalDateTime datebirth) {
+        this.datebirth = datebirth;
     }
-
-    
-
 
     public String getGender() {
         return gender;
     }
 
-
-
-
     public void setGender(String gender) {
         this.gender = gender;
     }
-
 
     public String getEmail() {
         return email;
     }
 
-
-
-
     public void setEmail(String email) {
         this.email = email;
     }
-
-
-
 
     public String getUsername() {
         return username;
     }
 
-
-
-
     public void setUsername(String username) {
         this.username = username;
     }
-
-
-
 
     public String getPassword() {
         return password;
     }
 
-
-
-
     public void setPassword(String password) {
         this.password = password;
     }
 
-
-
-
-    public GroupEntity getGroup() {
-        return group;
+    public TeamEntity getTeam() {
+        return team;
     }
 
-
-
-
-    public void setGroup(GroupEntity group) {
-        this.group = group;
+    public void setTeam(TeamEntity team) {
+        this.team = team;
     }
-
-
-
 
     public UsertypeEntity getUsertype() {
         return usertype;
@@ -205,10 +158,12 @@ public class UserEntity implements Serializable {
         return routes.size();
     }
 
-
     @PreRemove
     public void nullify() {
         this.routes.forEach(c -> c.setUser(null));
-    
+
     }
+
+
+
 }

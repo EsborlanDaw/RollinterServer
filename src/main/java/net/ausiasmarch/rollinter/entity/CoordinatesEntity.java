@@ -22,29 +22,21 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 @Entity
-@Table(name = "country")
+@Table(name = "coordinates")
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 
-public class CountryEntity {
-    
+public class CoordinatesEntity {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String name;
-
-    @OneToMany(mappedBy = "city", fetch = FetchType.LAZY)
-    private final List <CityEntity> cities;
+    private String x;
+    private String y;
     
-
-    public CountryEntity(List<CityEntity> routes) {
-        this.cities = new ArrayList<>();
-    }
-
-    public CountryEntity(Long id,List<CityEntity> routes) {
-        this.cities = new ArrayList<>();
-        this.id = id;
-    }
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "id_route")
+    private RouteEntity route;
 
     public Long getId() {
         return id;
@@ -54,22 +46,24 @@ public class CountryEntity {
         this.id = id;
     }
 
-    public String getName() {
-        return name;
+    public String getX() {
+        return x;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setX(String x) {
+        this.x = x;
     }
 
-    public int getCities() {
-        return cities.size();
+    public String getY() {
+        return y;
     }
 
-    @PreRemove
-    public void nullify() {
-        this.cities.forEach(c -> c.setCountry(null));
+    public void setY(String y) {
+        this.y = y;
     }
 
+    public void setRoute(RouteEntity route) {
+        this.route = route;
+    }
 
 }

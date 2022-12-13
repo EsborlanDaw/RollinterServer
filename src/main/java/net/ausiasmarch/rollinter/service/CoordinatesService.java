@@ -1,5 +1,5 @@
 package net.ausiasmarch.rollinter.service;
 
-public class CountryService {
+public class CoordinatesService {
     
 }
