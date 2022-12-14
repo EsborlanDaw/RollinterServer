@@ -6,13 +6,14 @@ import org.springframework.stereotype.Service;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-
 import net.ausiasmarch.rollinter.entity.UserEntity;
+import net.ausiasmarch.rollinter.repository.TeamRepository;
 import net.ausiasmarch.rollinter.repository.UserRepository;
 import net.ausiasmarch.rollinter.repository.UsertypeRepository;
 import net.ausiasmarch.rollinter.exception.ResourceNotFoundException;
 import net.ausiasmarch.rollinter.exception.ResourceNotModifiedException;
 import net.ausiasmarch.rollinter.helper.ValidationHelper;
+import net.ausiasmarch.rollinter.exception.ValidationException;
 
 
 @Service
@@ -21,13 +22,39 @@ public class UserService {
     @Autowired
     UsertypeService oUsertypeService;
 
+    @Autowired
+    TeamService oTeamService;
+
     private final UsertypeRepository oUsertypeRepository;
     private final UserRepository oUserRepository;
+    private final AuthService oAuthService;
+    private final TeamRepository oTeamRepository;
 
     @Autowired
-    public UserService(UserRepository oUserRepository, UsertypeRepository oUsertypeRepository){
+    public UserService(UserRepository oUserRepository, TeamRepository oTeamRepository, UsertypeRepository oUsertypeRepository, AuthService oAuthService){
         this.oUserRepository = oUserRepository;
+        this.oTeamRepository = oTeamRepository;
         this.oUsertypeRepository = oUsertypeRepository;
+        this.oAuthService = oAuthService;
+    }
+
+    public void validate(Long id) {
+        if (!oUserRepository.existsById(id)) {
+            throw new ResourceNotFoundException("id " + id + " not exist");
+        }
+    }
+
+    public void validate(UserEntity oUserEntity) {
+        ValidationHelper.validateStringLength(oUserEntity.getName(), 2, 50, "campo name de User(el campo debe tener longitud de 2 a 50 caracteres)");
+        ValidationHelper.validateStringLength(oUserEntity.getSurname1(), 2, 50, "campo surname de User(el campo debe tener longitud de 2 a 50 caracteres)");
+        ValidationHelper.validateStringLength(oUserEntity.getSurname2(), 2, 50, "campo lastname de User(el campo debe tener longitud de 2 a 50 caracteres)");
+        ValidationHelper.validateEmail(oUserEntity.getEmail(), "campo email de User");
+        ValidationHelper.validateLogin(oUserEntity.getUsername(), "campo username de User");
+        if (oUserRepository.existsByUsername(oUserEntity.getUsername())) {
+            throw new ValidationException("el campo username está repetido");
+        }
+        oUsertypeService.validate(oUserEntity.getUsertype().getId());
+        oTeamService.validate(oUserEntity.getTeam().getId());
     }
 
     public UserEntity get (Long id) {
@@ -68,5 +95,34 @@ public class UserService {
             }
         }
 
+    }
+
+    public Long count() {
+        //oAuthService.OnlyAdmins();
+        return oUserRepository.count();
+    }
+
+    public Long update(UserEntity oUserEntity) {
+        validate(oUserEntity.getId());
+        //oAuthService.OnlyAdmins();
+        return oUserRepository.save(oUserEntity).getId();
+    }
+
+    public Long create(UserEntity oNewUserEntity) {
+        //oAuthService.OnlyAdmins();
+        validate(oNewUserEntity);
+        oNewUserEntity.setId(0L);
+        return oUserRepository.save(oNewUserEntity).getId();
+    }
+
+    public Long delete(Long id) {
+        //oAuthService.OnlyAdmins();
+        validate(id);
+        oUserRepository.deleteById(id);
+        if (oUserRepository.existsById(id)) {
+            throw new ResourceNotModifiedException("can't remove register " + id);
+        } else {
+            return id;
+        }
     }
 }

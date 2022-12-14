@@ -1,7 +1,9 @@
 package net.ausiasmarch.rollinter.entity;
 
 import java.io.Serializable;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -12,6 +14,9 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.PreRemove;
 import javax.persistence.Table;
+
+import org.springframework.format.annotation.DateTimeFormat;
+
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import java.util.ArrayList;
@@ -34,8 +39,9 @@ public class UserEntity implements Serializable {
     private String surname1;
     private String surname2;
 
-    //@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
-    private LocalDateTime datebirth;
+    @Column(name = "datebirth")
+    @JsonFormat(pattern="yyyy-MM-dd")
+    private LocalDate datebirth;
 
     private String gender;
     private String username;
@@ -98,11 +104,11 @@ public class UserEntity implements Serializable {
         this.surname2 = surname2;
     }
 
-    public LocalDateTime getDatebirth() {
+    public LocalDate getDatebirth() {
         return datebirth;
     }
 
-    public void setDatebirth(LocalDateTime datebirth) {
+    public void setDatebirth(LocalDate datebirth) {
         this.datebirth = datebirth;
     }
 
@@ -163,7 +169,5 @@ public class UserEntity implements Serializable {
         this.routes.forEach(c -> c.setUser(null));
 
     }
-
-
 
 }

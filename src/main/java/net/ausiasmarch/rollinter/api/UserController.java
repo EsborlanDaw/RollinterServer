@@ -10,8 +10,10 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -43,7 +45,25 @@ public class UserController {
         return new ResponseEntity<>(oUserService.getPage(oPageable, strFilter, id_team, id_usertype), HttpStatus.OK);
     }
 
+    @GetMapping("/count")
+    public ResponseEntity<Long> count() {
+        return new ResponseEntity<Long>(oUserService.count(), HttpStatus.OK);
+    }
 
+    @PutMapping("")
+    public ResponseEntity<Long> update(@RequestBody UserEntity oUserEntity) {
+        return new ResponseEntity<Long>(oUserService.update(oUserEntity), HttpStatus.OK);
+    }
+
+    @PostMapping("/")
+    public ResponseEntity<Long> create(@RequestBody UserEntity oNewUserEntity) {
+        return new ResponseEntity<Long>(oUserService.create(oNewUserEntity), HttpStatus.OK);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Long> delete(@PathVariable(value = "id") Long id) {
+        return new ResponseEntity<Long>(oUserService.delete(id), HttpStatus.OK);
+    }
 
     
 }
