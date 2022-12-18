@@ -2,7 +2,7 @@
 package net.ausiasmarch.rollinter.helper;
 
 public enum UsertypeHelper {
-    ADMIN(1L), REVIEWER(2L), DEVELOPER(3L);
+    ADMIN(1L), ROLLUSER(2L);
     private final Long usertype;
 
     UsertypeHelper(Long usertype) {

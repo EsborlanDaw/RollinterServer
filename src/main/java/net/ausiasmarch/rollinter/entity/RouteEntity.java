@@ -68,9 +68,6 @@ public class RouteEntity {
         this.id = id;
     }
 
-    public int getZones() {
-        return coordinates.size();
-    }
 
     public String getDificulty() {
         return dificulty;
@@ -88,12 +85,15 @@ public class RouteEntity {
         this.time = time;
     }
 
+    public Long getUser() {
+        return user.getId();
+    }
 
     public void setUser(UserEntity user) {
         this.user = user;
     }
 
-    public int getCoordinate() {
+    public int getCoordinates() {
         return coordinates.size();
     }
 
@@ -103,4 +103,5 @@ public class RouteEntity {
         this.coordinates.forEach(c -> c.setRoute(null));
     }
 
+    
 }

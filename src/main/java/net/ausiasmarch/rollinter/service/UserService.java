@@ -54,10 +54,11 @@ public class UserService {
             throw new ValidationException("el campo username está repetido");
         }
         oUsertypeService.validate(oUserEntity.getUsertype().getId());
-        oTeamService.validate(oUserEntity.getTeam().getId());
+        
     }
 
     public UserEntity get (Long id) {
+        //oAuthService.OnlyAdminsOrOwnUsersData(id);
         return oUserRepository.findById(id).get();
         //.orElseThrow(() -> new ResourceNotFoundException("User with id: " + id + " not found"));
     }
@@ -104,7 +105,7 @@ public class UserService {
 
     public Long update(UserEntity oUserEntity) {
         validate(oUserEntity.getId());
-        //oAuthService.OnlyAdmins();
+        oAuthService.OnlyAdminsOrOwnUsersData(oUserEntity.getId());
         return oUserRepository.save(oUserEntity).getId();
     }
 
@@ -116,7 +117,7 @@ public class UserService {
     }
 
     public Long delete(Long id) {
-        //oAuthService.OnlyAdmins();
+        //oAuthService.OnlyAdminsOrOwnUsersData(id);
         validate(id);
         oUserRepository.deleteById(id);
         if (oUserRepository.existsById(id)) {

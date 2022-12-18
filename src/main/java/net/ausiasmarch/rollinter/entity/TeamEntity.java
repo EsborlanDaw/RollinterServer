@@ -67,11 +67,21 @@ public class TeamEntity {
         return name;
     }
 
+    public Long getUser() {
+        return user.getId();
+    }
+
+
+    public void setUser(UserEntity user) {
+        this.user = user;
+    }
+
+
     public void setName(String name) {
         this.name = name;
     }
 
-    public int geUsers() {
+    public int getUsers() {
         return users.size();
     }
 

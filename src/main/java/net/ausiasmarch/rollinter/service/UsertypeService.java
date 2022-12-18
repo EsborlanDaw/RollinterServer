@@ -33,14 +33,14 @@ public class UsertypeService {
     }
 
     public Page<UsertypeEntity> getPage(int page, int size) {
-        //oAuthService.OnlyAdmins();
+       //oAuthService.OnlyAdmins();
         Pageable oPageable = PageRequest.of(page, size);
         
             return oUsertypeRepository.findAll(oPageable);
     }
 
     public Long update(UsertypeEntity oUsertypeEntity) {
-        //oAuthService.OnlyAdmins();
+       //oAuthService.OnlyAdmins();
         validate(oUsertypeEntity.getId());
         oUsertypeRepository.save(oUsertypeEntity);
         return oUsertypeEntity.getId();

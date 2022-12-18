@@ -72,9 +72,11 @@ public class TeamService {
                     return oTeamRepository.findByNameContainingIgnoreCase(strFilter, oPageable);
                 }
             }
-        //} else {
-        //    throw new UnauthorizedException("this request is only allowed to admin role");
-        //}
+        /*}
+         else {
+            throw new UnauthorizedException("this request is only allowed to admin role");
+        }*/
+    
     }
 
     public Long create(TeamEntity oNewTeamEntity) {
@@ -95,6 +97,6 @@ public class TeamService {
     }
 
     
-
+    
 
 }

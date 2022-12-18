@@ -40,7 +40,7 @@ public class UserEntity implements Serializable {
     private String surname2;
 
     @Column(name = "datebirth")
-    @JsonFormat(pattern="yyyy-MM-dd")
+    @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate datebirth;
 
     private String gender;
@@ -163,11 +163,10 @@ public class UserEntity implements Serializable {
     public int getRoutes() {
         return routes.size();
     }
-
+    
     @PreRemove
     public void nullify() {
         this.routes.forEach(c -> c.setUser(null));
-
     }
 
 }
