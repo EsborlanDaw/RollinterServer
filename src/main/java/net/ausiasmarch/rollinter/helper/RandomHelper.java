@@ -2,6 +2,7 @@
 package net.ausiasmarch.rollinter.helper;
 
 import java.security.SecureRandom;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -48,6 +49,15 @@ public class RandomHelper {
         Date date = new Date(gc.getTimeInMillis());
         return date;
     }
+
+    /*public static Date getRadomDate1() {
+        LocalDate actualdate = LocalDate.now();
+        int year = getRandomInt((actualdate.getYear()-95), (actualdate.getYear()-16));
+        int month = getRandomInt(1, 12);
+        int day = getRandomInt((1,actualdate.withMonth(month)));
+        Date date = new Date();
+        return date;
+    }*/
 
     public static LocalDateTime getRadomDate2() {
         int randomSeconds = new Random().nextInt(3600 * 24);

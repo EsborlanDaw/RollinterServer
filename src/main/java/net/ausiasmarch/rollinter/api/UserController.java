@@ -55,7 +55,7 @@ public class UserController {
         return new ResponseEntity<Long>(oUserService.update(oUserEntity), HttpStatus.OK);
     }
 
-    @PostMapping("/")
+    @PostMapping("")
     public ResponseEntity<Long> create(@RequestBody UserEntity oNewUserEntity) {
         return new ResponseEntity<Long>(oUserService.create(oNewUserEntity), HttpStatus.OK);
     }

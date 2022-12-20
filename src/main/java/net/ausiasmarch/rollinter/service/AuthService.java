@@ -31,7 +31,7 @@ public class AuthService {
         if (oUserBean.getPassword() != null) {
             UserEntity oUserEntity = oUserRepository.findByUsernameAndPassword(oUserBean.getUsername(), oUserBean.getPassword());
             if (oUserEntity != null) {
-                oHttpSession.setAttribute("User", oUserEntity);
+                oHttpSession.setAttribute("user", oUserEntity);
                 return oUserEntity;
             } else {
                 throw new UnauthorizedException("login or password incorrect");
@@ -46,7 +46,7 @@ public class AuthService {
     }
 
     public UserEntity check() {
-        UserEntity oUserSessionEntity = (UserEntity) oHttpSession.getAttribute("User");
+        UserEntity oUserSessionEntity = (UserEntity) oHttpSession.getAttribute("user");
         if (oUserSessionEntity != null) {
             return oUserSessionEntity;
         } else {
@@ -55,7 +55,7 @@ public class AuthService {
     }
 
     public boolean isLoggedIn() {
-        UserEntity oUserSessionEntity = (UserEntity) oHttpSession.getAttribute("User");
+        UserEntity oUserSessionEntity = (UserEntity) oHttpSession.getAttribute("user");
         if (oUserSessionEntity == null) {
             return false;
         } else {
@@ -64,7 +64,7 @@ public class AuthService {
     }
 
     public Long getUserID() {
-        UserEntity oUserSessionEntity = (UserEntity) oHttpSession.getAttribute("User");
+        UserEntity oUserSessionEntity = (UserEntity) oHttpSession.getAttribute("user");
         if (oUserSessionEntity != null) {
             return oUserSessionEntity.getId();
         } else {
@@ -73,7 +73,7 @@ public class AuthService {
     }
 
     public boolean isAdmin() {
-        UserEntity oUserSessionEntity = (UserEntity) oHttpSession.getAttribute("User");
+        UserEntity oUserSessionEntity = (UserEntity) oHttpSession.getAttribute("user");
         if (oUserSessionEntity != null) {
             if (oUserSessionEntity.getUsertype().getId().equals(UsertypeHelper.ADMIN)) {
                 return true;
@@ -83,7 +83,7 @@ public class AuthService {
     }
 
     public boolean isUser() {
-        UserEntity oUserSessionEntity = (UserEntity) oHttpSession.getAttribute("User");
+        UserEntity oUserSessionEntity = (UserEntity) oHttpSession.getAttribute("user");
         if (oUserSessionEntity != null) {
             if (oUserSessionEntity.getUsertype().getId().equals(UsertypeHelper.ROLLUSER)) {
                 return true;
@@ -93,7 +93,7 @@ public class AuthService {
     }
 
     public void OnlyAdmins() {
-        UserEntity oUserSessionEntity = (UserEntity) oHttpSession.getAttribute("User");
+        UserEntity oUserSessionEntity = (UserEntity) oHttpSession.getAttribute("user");
         if (oUserSessionEntity == null) {
             throw new UnauthorizedException("this request is only allowed to admin role");
         } else {
@@ -104,7 +104,7 @@ public class AuthService {
     }
 
     public void OnlyUsers() {
-        UserEntity oUserSessionEntity = (UserEntity) oHttpSession.getAttribute("User");
+        UserEntity oUserSessionEntity = (UserEntity) oHttpSession.getAttribute("user");
         if (oUserSessionEntity == null) {
             throw new UnauthorizedException("this request is only allowed to user role");
         } else {
@@ -115,7 +115,7 @@ public class AuthService {
     }
 
     public void OnlyAdminsOrUsers() {
-        UserEntity oUserSessionEntity = (UserEntity) oHttpSession.getAttribute("User");
+        UserEntity oUserSessionEntity = (UserEntity) oHttpSession.getAttribute("user");
         if (oUserSessionEntity == null) {
             throw new UnauthorizedException("this request is only allowed to user or admin role");
         } else {
@@ -124,7 +124,7 @@ public class AuthService {
     }
 
     public void OnlyAdminsOrOwnUsersData(Long id) {
-        UserEntity oUserSessionEntity = (UserEntity) oHttpSession.getAttribute("User");
+        UserEntity oUserSessionEntity = (UserEntity) oHttpSession.getAttribute("user");
         if (oUserSessionEntity != null) {
             if (oUserSessionEntity.getUsertype().getId().equals(UsertypeHelper.ROLLUSER)) {
                 if (!oUserSessionEntity.getId().equals(id)) {

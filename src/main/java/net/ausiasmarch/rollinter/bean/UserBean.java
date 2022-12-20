@@ -7,9 +7,9 @@ import io.swagger.v3.oas.annotations.media.Schema;
 
 public class UserBean {
 
-    @Schema(example = "admin")
+    @Schema(example = "esbo")
     private String username;
-    @Schema(example = "4298f843f830fb3cc13ecdfe1b2cf10f51f929df056d644d1bca73228c5e8f64")
+    @Schema(example = "7590df9224ab787197af9237b0c46d032fa9f8f631fa23bb5045311eeb4e813d")
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String password;
 

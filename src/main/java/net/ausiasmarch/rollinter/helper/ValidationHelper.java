@@ -2,6 +2,7 @@
 package net.ausiasmarch.rollinter.helper;
 
 import java.time.Duration;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import net.ausiasmarch.rollinter.exception.ValidationException;
 
@@ -80,6 +81,14 @@ public class ValidationHelper {
         if (iRPP < 1 || iRPP > 1000) {
             throw new ValidationException("RPP value is not valid (must be between 1 and 1000)");
         }
+    }
+
+    public static void validateYears (LocalDate userdate) {
+        LocalDate actualdate = LocalDate.now();
+        if ((actualdate.getYear() - userdate.getYear()) < 15){
+            throw new ValidationException("You must be over 15 years old");
+        }
+
     }
 
 }

@@ -40,7 +40,7 @@ public class UserEntity implements Serializable {
     private String surname2;
 
     @Column(name = "datebirth")
-    @JsonFormat(pattern = "yyyy-MM-dd")
+    @JsonFormat(pattern = "dd-MM-yyyy")
     private LocalDate datebirth;
 
     private String gender;
@@ -146,6 +146,10 @@ public class UserEntity implements Serializable {
 
     public TeamEntity getTeam() {
         return team;
+    }
+
+    public Long setTeamID() {
+        return team.getId();
     }
 
     public void setTeam(TeamEntity team) {

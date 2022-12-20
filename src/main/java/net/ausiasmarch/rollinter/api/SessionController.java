@@ -1,18 +1,14 @@
 package net.ausiasmarch.rollinter.api;
 
-import javax.servlet.http.HttpSession;
 import net.ausiasmarch.rollinter.bean.UserBean;
 import net.ausiasmarch.rollinter.entity.UserEntity;
-import net.ausiasmarch.rollinter.repository.UserRepository;
 import net.ausiasmarch.rollinter.service.AuthService;
-import net.ausiasmarch.rollinter.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -21,34 +17,33 @@ import org.springframework.web.bind.annotation.RestController;
 public class SessionController {
 
     @Autowired
-    HttpSession oHttpSession;
+    AuthService oAuthService;
 
     @GetMapping("")
-    public ResponseEntity<UserBean> check() {
-        UserBean oUserBean = (UserBean) oHttpSession.getAttribute("User");
-        if (oUserBean == null) {
-            return new ResponseEntity<>(null, HttpStatus.UNAUTHORIZED);
-        } else {
-            return new ResponseEntity<UserBean>(oUserBean, HttpStatus.OK);
-        }
+    public ResponseEntity<UserEntity> check() {
+        return new ResponseEntity<UserEntity>(oAuthService.check(), HttpStatus.OK);
     }
 
-    @PostMapping("")
-    public ResponseEntity<UserBean> login(@RequestBody UserBean oUserBean) {
-        if (oUserBean.getUsername().equalsIgnoreCase("admin")
-               && oUserBean.getPassword().equalsIgnoreCase("8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918")) {
-            oHttpSession.setAttribute("User", oUserBean);
-            return new ResponseEntity<UserBean>(oUserBean, HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>(null, HttpStatus.UNAUTHORIZED);
-        }
+    @PostMapping
+    public ResponseEntity<UserEntity> login(@org.springframework.web.bind.annotation.RequestBody UserBean oUserBean) {
+        return new ResponseEntity<UserEntity>(oAuthService.login(oUserBean), HttpStatus.OK);
     }
 
+//    @PostMapping(produces = "application/json", consumes = "application/json")
+//    public ResponseEntity<UserEntity> login(
+//            @org.springframework.web.bind.annotation.RequestBody // Spring
+//            @io.swagger.v3.oas.annotations.parameters.RequestBody // Swagger
+//            @Valid // Bean validation to ensure if the incoming object is valid
+//            final UserBean oUserBean ) //            @RequestBody(description = "login endpoint", required = true, content = @Content(schema = @Schema(implementation = UserEntity.class))) UserBean oUserBean) ,
+//    {
+//        return new ResponseEntity<UserEntity>(oAuthService.login(oUserBean), HttpStatus.OK);
+//    }
     @DeleteMapping("")
     public ResponseEntity<?> logout() {
-        oHttpSession.invalidate();
+        oAuthService.logout();
         return new ResponseEntity<>(null, HttpStatus.OK);
     }
+
 
 }
 
