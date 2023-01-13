@@ -8,6 +8,7 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.Random;
 import java.time.ZoneId;
+import java.time.temporal.ChronoUnit;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class RandomHelper {
@@ -36,13 +37,13 @@ public class RandomHelper {
         return ThreadLocalRandom.current().nextInt(minValue, maxValue);
     }
 
-    public static LocalDateTime getRadomDateTime() {
-        return RandomHelper.getRadomDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
+    public static LocalDateTime getRandomDateTime() {
+        return RandomHelper.getRandomDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
     }
 
-    public static Date getRadomDate() {
+    public static Date getRandomDate() {
         GregorianCalendar gc = new GregorianCalendar();
-        int year = getRandomInt(2010, 2019);
+        int year = getRandomInt((LocalDate.now().getYear()-100), LocalDate.now().getYear()-15);
         gc.set(gc.YEAR, year);
         int dayOfYear = getRandomInt(1, gc.getActualMaximum(gc.DAY_OF_YEAR));
         gc.set(gc.DAY_OF_YEAR, dayOfYear);
@@ -50,16 +51,14 @@ public class RandomHelper {
         return date;
     }
 
-    /*public static Date getRadomDate1() {
-        LocalDate actualdate = LocalDate.now();
-        int year = getRandomInt((actualdate.getYear()-95), (actualdate.getYear()-16));
-        int month = getRandomInt(1, 12);
-        int day = getRandomInt((1,actualdate.withMonth(month)));
-        Date date = new Date();
-        return date;
-    }*/
+    public static LocalDate getRandomDate1() {
 
-    public static LocalDateTime getRadomDate2() {
+        Date date = getRandomDate();
+
+        return date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+    }
+
+    public static LocalDateTime getRandomDate2() {
         int randomSeconds = new Random().nextInt(3600 * 24);
         LocalDateTime anyTime = LocalDateTime.now().minusSeconds(randomSeconds);
         return anyTime;

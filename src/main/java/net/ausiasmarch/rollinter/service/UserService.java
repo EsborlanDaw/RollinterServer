@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-
+import java.util.Date;
 import net.ausiasmarch.rollinter.entity.TeamEntity;
 import net.ausiasmarch.rollinter.entity.UserEntity;
 import net.ausiasmarch.rollinter.repository.TeamRepository;
@@ -48,7 +48,9 @@ public class UserService {
     private final List<String> surnames2 = List.of("Sanchis", "Bañuls", "Laenos", "Torres", "Sanchez", "Gyori",
             "Luz", "Pascual", "Blayimir", "Castello", "Hurtado", "Mourad", "Fernández", "Ríos", "Benavent", "Benavent", "Patricio", "Romance", "Zanon", "Morera");
     
-    @Autowired
+            private final List<String> gender = List.of("M", "F","N");
+    
+   
     public UserService(UserRepository oUserRepository, TeamRepository oTeamRepository, UsertypeRepository oUsertypeRepository, AuthService oAuthService){
         this.oUserRepository = oUserRepository;
         this.oTeamRepository = oTeamRepository;
@@ -137,8 +139,7 @@ public class UserService {
         validate(oNewUserEntity);
         oNewUserEntity.setId(0L);
         oNewUserEntity.setPassword(ROLLINTER_DEFAULT_PASSWORD);
-        TeamEntity oTeamEntity = oTeamRepository.getById(ROLLINTER_DEFAULT_TEAM);
-        oNewUserEntity.setTeam(oTeamEntity);
+        oNewUserEntity.setTeam(oTeamRepository.getById(ROLLINTER_DEFAULT_TEAM));
         return oUserRepository.save(oNewUserEntity).getId();
     }
 
@@ -152,7 +153,7 @@ public class UserService {
             return id;
         }
     }
-/* 
+ 
     //necesario para coger el id para el generate del team 
     public UserEntity getOneRandom() {
         if (count() > 0) {
@@ -178,18 +179,26 @@ public class UserService {
         oUserEntity.setUsername((oUserEntity.getName().toLowerCase()
                 + oUserEntity.getSurname1().toLowerCase()).replaceAll("\\s", ""));
         oUserEntity.setEmail(oUserEntity.getUsername() + "@rollinter.net");
-
+        oUserEntity.setGender(gender.get(RandomHelper.getRandomInt(0, 1)));
         oUserEntity.setPassword(ROLLINTER_DEFAULT_PASSWORD);
+        oUserEntity.setDatebirth(RandomHelper.getRandomDate());
 
-        int totalUsertypes = (int) oUsertypeRepository.count();
-        int randomUserTypeId = RandomHelper.getRandomInt(1, totalUsertypes);
-        oUsertypeRepository.findById((long) randomUserTypeId)
-                .ifPresent(oUserEntity::setUsertype);
+        oUserEntity.setUsertype(oUsertypeRepository.getById((long) 2));
 
         int totalTeams = (int) oTeamRepository.count();
+        int randomTeamId = RandomHelper.getRandomInt(1, totalTeams + 1);
+        
+        if((oTeamRepository.existsById((long) randomTeamId))){
+            oUserEntity.setTeam(oTeamRepository.getById((long) randomTeamId));
+        } else{
+            oUserEntity.setTeam(oTeamRepository.getById(ROLLINTER_DEFAULT_TEAM));
+        }
+       
+
+      /*   int totalTeams = (int) oTeamRepository.count();
         int randomTeamId = RandomHelper.getRandomInt(1, totalTeams);
         oTeamRepository.findById((long) randomTeamId)
-                .ifPresent(oUserEntity::setTeam);
+                .ifPresent(oUserEntity::setTeam); */
 
         return oUserEntity;
     }
@@ -207,5 +216,5 @@ public class UserService {
         }
         oUserRepository.saveAll(UserToSave);
         return oUserRepository.count();
-    }*/
+    }
 }

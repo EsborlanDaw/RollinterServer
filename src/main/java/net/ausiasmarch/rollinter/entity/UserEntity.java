@@ -1,6 +1,7 @@
 package net.ausiasmarch.rollinter.entity;
 
 import java.io.Serializable;
+import java.util.Date;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -41,7 +42,7 @@ public class UserEntity implements Serializable {
 
     @Column(name = "datebirth")
     @JsonFormat(pattern = "dd-MM-yyyy")
-    private LocalDate datebirth;
+    private Date datebirth;
 
     private String gender;
     private String username;
@@ -104,11 +105,11 @@ public class UserEntity implements Serializable {
         this.surname2 = surname2;
     }
 
-    public LocalDate getDatebirth() {
+    public Date getDatebirth() {
         return datebirth;
     }
 
-    public void setDatebirth(LocalDate datebirth) {
+    public void setDatebirth(Date datebirth) {
         this.datebirth = datebirth;
     }
 
@@ -146,10 +147,6 @@ public class UserEntity implements Serializable {
 
     public TeamEntity getTeam() {
         return team;
-    }
-
-    public Long setTeamID() {
-        return team.getId();
     }
 
     public void setTeam(TeamEntity team) {

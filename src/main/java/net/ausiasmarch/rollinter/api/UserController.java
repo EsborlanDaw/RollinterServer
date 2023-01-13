@@ -65,5 +65,15 @@ public class UserController {
         return new ResponseEntity<Long>(oUserService.delete(id), HttpStatus.OK);
     }
 
+    @PostMapping("/generate")
+    public ResponseEntity<UserEntity> generateOne() {
+        return new ResponseEntity<>(oUserService.generateOne(), HttpStatus.OK);
+    }
+
+    @PostMapping("/generate/{amount}")
+    public ResponseEntity<Long> generateSome(@PathVariable Long amount) {
+        return new ResponseEntity<>(oUserService.generateSome(amount), HttpStatus.OK);
+    }
+
     
 }

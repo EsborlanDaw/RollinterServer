@@ -4,6 +4,11 @@ package net.ausiasmarch.rollinter.helper;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.Period;
+import java.time.ZoneId;
+import java.util.Date;
+
+import ch.qos.logback.classic.pattern.DateConverter;
 import net.ausiasmarch.rollinter.exception.ValidationException;
 
 public class ValidationHelper {
@@ -83,10 +88,16 @@ public class ValidationHelper {
         }
     }
 
-    public static void validateYears (LocalDate userdate) {
-        LocalDate actualdate = LocalDate.now();
-        if ((actualdate.getYear() - userdate.getYear()) < 15){
-            throw new ValidationException("You must be over 15 years old");
+    public static void validateYears (Date userdate) {
+
+        LocalDate newuserdate = userdate.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+        LocalDate actuallocaldate = LocalDate.now();
+        
+
+        Period year = Period.between(newuserdate,actuallocaldate);
+
+        if (year.getYears() < 15){
+            throw new ValidationException("Validate error: You must be over 15 years old or you can not have 110 years");
         }
 
     }
