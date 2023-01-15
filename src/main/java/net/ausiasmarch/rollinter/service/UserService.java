@@ -84,6 +84,7 @@ public class UserService {
         //.orElseThrow(() -> new ResourceNotFoundException("User with id: " + id + " not found"));
     }
 
+
     public Page<UserEntity> getPage(Pageable oPageable, String strFilter, Long id_team, Long id_usertype) {
         //oAuthService.OnlyAdmins();
         ValidationHelper.validateRPP(oPageable.getPageSize());
@@ -132,6 +133,22 @@ public class UserService {
         UserEntity oOldUserEntity=oUserRepository.getById(oUserEntity.getId());
         oUserEntity.setPassword(oOldUserEntity.getPassword());
         return oUserRepository.save(oUserEntity).getId();
+    }
+
+    
+    public void updateTeam (TeamEntity oTeamEntity){
+
+        List <UserEntity> oUserEntities = new ArrayList();
+
+        if(oUserRepository.existsByTeamId((oTeamEntity.getId()))){
+            oUserEntities = oUserRepository.findByTeamId(oTeamEntity.getId());
+        for ( int i = 0 ; i < oUserEntities.size(); i++)
+        {
+            
+            oUserEntities.get(i).setTeam(oTeamRepository.getById(ROLLINTER_DEFAULT_TEAM));
+            oUserRepository.save(oUserEntities.get(i)).getId();
+        }
+        }
     }
 
     public Long create(UserEntity oNewUserEntity) {
@@ -185,21 +202,12 @@ public class UserService {
 
         oUserEntity.setUsertype(oUsertypeRepository.getById((long) 2));
 
-        int totalTeams = (int) oTeamRepository.count();
-        int randomTeamId = RandomHelper.getRandomInt(1, totalTeams + 1);
+        List <TeamEntity> totalTeams = oTeamRepository.findAll();
+        int randomTeamId = RandomHelper.getRandomInt(1, totalTeams.size()-1);
+        TeamEntity oTeamEntity = totalTeams.get(randomTeamId);
+
+        oUserEntity.setTeam(oTeamRepository.getById(oTeamEntity.getId()));
         
-        if((oTeamRepository.existsById((long) randomTeamId))){
-            oUserEntity.setTeam(oTeamRepository.getById((long) randomTeamId));
-        } else{
-            oUserEntity.setTeam(oTeamRepository.getById(ROLLINTER_DEFAULT_TEAM));
-        }
-       
-
-      /*   int totalTeams = (int) oTeamRepository.count();
-        int randomTeamId = RandomHelper.getRandomInt(1, totalTeams);
-        oTeamRepository.findById((long) randomTeamId)
-                .ifPresent(oUserEntity::setTeam); */
-
         return oUserEntity;
     }
 

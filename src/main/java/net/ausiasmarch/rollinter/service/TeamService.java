@@ -1,10 +1,9 @@
 package net.ausiasmarch.rollinter.service;
 
 import net.ausiasmarch.rollinter.entity.TeamEntity;
-import net.ausiasmarch.rollinter.exception.CannotPerformOperationException;
+import net.ausiasmarch.rollinter.entity.UserEntity;
 import net.ausiasmarch.rollinter.exception.ResourceNotFoundException;
-import net.ausiasmarch.rollinter.exception.UnauthorizedException;
-import net.ausiasmarch.rollinter.helper.RandomHelper;
+import net.ausiasmarch.rollinter.exception.ResourceNotModifiedException;
 import net.ausiasmarch.rollinter.repository.UserRepository;
 import net.ausiasmarch.rollinter.repository.TeamRepository;
 import org.springframework.data.domain.Pageable;
@@ -13,7 +12,6 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -22,14 +20,12 @@ public class TeamService {
     private final TeamRepository oTeamRepository;
     private final AuthService oAuthService;
 
+
     @Autowired
     UserRepository oUserRepository;
 
     @Autowired
     UserService oUserService;
-
-
-    
 
     @Autowired
     public TeamService(TeamRepository oTeamRepository, AuthService oAuthService) {
@@ -50,10 +46,16 @@ public class TeamService {
     }
 
     public Long delete(Long id) {
-        validate(id);
         //oAuthService.OnlyAdmins();
-        oTeamRepository.deleteById(id);
-        return id;
+        validate(id); 
+        oUserService.updateTeam(oTeamRepository.getById(id));
+        oTeamRepository.deleteById(id);oUserRepository.deleteById(id);
+
+        if (oTeamRepository.existsById(id)) {
+            throw new ResourceNotModifiedException("can't remove register " + id);
+        } else {
+            return id;
+        }
     }
 
     public Page<TeamEntity> getPage(Pageable oPageable, String strFilter, Long lUser) {
@@ -96,7 +98,12 @@ public class TeamService {
         return oTeamRepository.save(oTeamEntity).getId();
     }
 
-    
+    public List <TeamEntity> teams (){
+
+        List <TeamEntity> teams = oTeamRepository.findAll();
+
+        return teams;
+    }
     
 
 }

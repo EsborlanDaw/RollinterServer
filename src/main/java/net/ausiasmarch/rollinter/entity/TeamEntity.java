@@ -25,8 +25,8 @@ public class TeamEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-
     private Long id;
+    
     private String name;
 
     @OneToMany(mappedBy = "team", fetch = FetchType.LAZY)
@@ -85,11 +85,11 @@ public class TeamEntity {
         return users.size();
     }
 
-    @PreRemove
+     @PreRemove
     public void nullify(){
         this.users.forEach(c ->
                                 c.setTeam(null));                  
-    }
+    } 
 
 
 }

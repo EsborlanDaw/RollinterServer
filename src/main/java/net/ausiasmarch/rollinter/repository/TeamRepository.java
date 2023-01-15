@@ -1,11 +1,16 @@
 package net.ausiasmarch.rollinter.repository;
 
 import net.ausiasmarch.rollinter.entity.TeamEntity;
+
+import java.util.List;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface TeamRepository extends JpaRepository<TeamEntity, Long> {
+
+    public List <TeamEntity> findAll();
 
     Page<TeamEntity> findAll(Pageable oPageable);
 
