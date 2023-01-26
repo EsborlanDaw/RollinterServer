@@ -34,6 +34,7 @@ public class TeamEntity {
 
     private LocalDateTime creationdate;
 
+    
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "id_user")
     private UserEntity user;

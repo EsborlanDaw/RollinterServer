@@ -33,10 +33,64 @@ public class CoordinatesService {
         this.oAuthService = oAuthService;
     }
 
+    public void validate(Long id) {
+        if (!oCoordinatesRepository.existsById(id)) {
+            throw new ResourceNotFoundException("id " + id + " not exist");
+        }
+    }
+
+    public void validate(CoordinatesEntity oCoordinatesEntity) {
+        // Validar dificultad y tiempo
+
+    }
+
     public CoordinatesEntity get(Long id) {
-        //oAuthService.OnlyAdmins();
+        // oAuthService.OnlyAdmins();
         return oCoordinatesRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Coordinates with id: " + id + " not found"));
     }
-    
+
+    public Long count() {
+        // oAuthService.OnlyAdmins();
+        return oCoordinatesRepository.count();
+    }
+
+    public Page<CoordinatesEntity> getPage(Pageable oPageable, String strFilter, Long lRoute) {
+        Page<CoordinatesEntity> oPage = null;
+        // if (oAuthService.isAdmin()) {
+        if (lRoute != null) {
+
+            return oCoordinatesRepository.findByRouteId(lRoute, oPageable);
+
+        } else {
+            return oCoordinatesRepository.findAll(oPageable);
+        }
+
+    }
+
+    public Long update(CoordinatesEntity oCoordinatesEntity) {
+        validate(oCoordinatesEntity.getId());
+        // oAuthService.OnlyAdmins();
+        return oCoordinatesRepository.save(oCoordinatesEntity).getId();
+    }
+
+    public Long create(CoordinatesEntity oNewCoordinatesEntity) {
+        // oAuthService.OnlyAdmins();
+        // Para crear una ruta tienes que introducir coordenadas
+        validate(oNewCoordinatesEntity);
+        oNewCoordinatesEntity.setId(0L);
+        return oCoordinatesRepository.save(oNewCoordinatesEntity).getId();
+    }
+
+    public Long delete(Long id) {
+        // oAuthService.OnlyAdmins();
+        validate(id);
+        oCoordinatesRepository.deleteById(id);
+        if (oCoordinatesRepository.existsById(id)) {
+            throw new ResourceNotModifiedException("can't remove register " + id);
+        } else {
+            return id;
+        }
+    }
+
 }

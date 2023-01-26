@@ -30,9 +30,38 @@ public class RouteController {
     @Autowired
     private RouteService oRouteService;
 
+    @GetMapping("/")
+    public ResponseEntity<Page<RouteEntity>> getPage(
+            @ParameterObject @PageableDefault(page = 0, size = 10, direction = Sort.Direction.DESC) Pageable oPageable,
+            @RequestParam(name = "filter", required = false) String strFilter,
+            @RequestParam(value = "user", required = false) Long id_user) {
+        return new ResponseEntity<>(oRouteService.getPage(oPageable, strFilter, id_user), HttpStatus.OK);
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<RouteEntity> get(@PathVariable(value = "id") Long id) {
         return new ResponseEntity<RouteEntity>(oRouteService.get(id), HttpStatus.OK);
     }
+
+    @GetMapping("/count")
+    public ResponseEntity<Long> count() {
+        return new ResponseEntity<Long>(oRouteService.count(), HttpStatus.OK);
+    }
+
+    @PutMapping("")
+    public ResponseEntity<Long> update(@RequestBody RouteEntity oRouteEntity) {
+        return new ResponseEntity<Long>(oRouteService.update(oRouteEntity), HttpStatus.OK);
+    }
+
+    @PostMapping("")
+    public ResponseEntity<Long> create(@RequestBody RouteEntity oNewRouteEntity) {
+        return new ResponseEntity<Long>(oRouteService.create(oNewRouteEntity), HttpStatus.OK);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Long> delete(@PathVariable(value = "id") Long id) {
+        return new ResponseEntity<Long>(oRouteService.delete(id), HttpStatus.OK);
+    }
+
     
 }

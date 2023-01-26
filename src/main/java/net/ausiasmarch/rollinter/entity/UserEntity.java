@@ -56,6 +56,9 @@ public class UserEntity implements Serializable {
     @JoinColumn(name = "id_usertype")
     private UsertypeEntity usertype;
 
+
+    
+
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "id_team")
     private TeamEntity team;
@@ -65,11 +68,13 @@ public class UserEntity implements Serializable {
 
     public UserEntity() {
         this.routes = new ArrayList<>();
+    
     }
 
     public UserEntity(Long id) {
 
         this.routes = new ArrayList<>();
+    
         this.id = id;
     }
 
@@ -164,10 +169,13 @@ public class UserEntity implements Serializable {
     public int getRoutes() {
         return routes.size();
     }
+
+    
     
     @PreRemove
     public void nullify() {
         this.routes.forEach(c -> c.setUser(null));
+        
     }
 
 }

@@ -72,7 +72,7 @@ public class UserService {
         ValidationHelper.validateEmail(oUserEntity.getEmail(), "campo email de User");
         ValidationHelper.validateLogin(oUserEntity.getUsername(), "campo username de User");
         if (oUserRepository.existsByUsername(oUserEntity.getUsername())) {
-            throw new ValidationException("el campo username está repetido");
+            throw new ValidationException("usrname exists");
         }
         oUsertypeService.validate(oUserEntity.getUsertype().getId());
         
@@ -80,8 +80,11 @@ public class UserService {
 
     public UserEntity get (Long id) {
         //oAuthService.OnlyAdminsOrOwnUsersData(id);
-        return oUserRepository.findById(id).get();
-        //.orElseThrow(() -> new ResourceNotFoundException("User with id: " + id + " not found"));
+        try {
+            return oUserRepository.findById(id).get();
+        } catch (Exception ex) {
+            throw new ResourceNotFoundException("id " + id + " not exist");
+        }
     }
 
 
@@ -182,7 +185,7 @@ public class UserService {
             oUserEntity = oUserRepository.getById(UserList.get(0).getId());
             return oUserEntity;
         } else {
-            throw new CannotPerformOperationException("ho hay usuarios en la base de datos");
+            throw new CannotPerformOperationException("There is not user in data base");
         }
     }
 
@@ -202,11 +205,11 @@ public class UserService {
 
         oUserEntity.setUsertype(oUsertypeRepository.getById((long) 2));
 
-        List <TeamEntity> totalTeams = oTeamRepository.findAll();
+       List <TeamEntity> totalTeams = oTeamRepository.findAll();
         int randomTeamId = RandomHelper.getRandomInt(1, totalTeams.size()-1);
         TeamEntity oTeamEntity = totalTeams.get(randomTeamId);
 
-        oUserEntity.setTeam(oTeamRepository.getById(oTeamEntity.getId()));
+        oUserEntity.setTeam(oTeamEntity);
         
         return oUserEntity;
     }
@@ -217,7 +220,6 @@ public class UserService {
     }
 
     public Long generateSome(Long amount) {
-        //oAuthService.OnlyAdmins();
         List<UserEntity> UserToSave = new ArrayList<>();
         for (int i = 0; i < amount; i++) {
             UserToSave.add(generateUser());
@@ -225,4 +227,12 @@ public class UserService {
         oUserRepository.saveAll(UserToSave);
         return oUserRepository.count();
     }
+    
+
+    public List <UserEntity> users (){
+
+        List <UserEntity> users = oUserRepository.findByTeamIdAndUsertypeId(ROLLINTER_DEFAULT_TEAM, (long) 2);
+
+        return users;
+    } 
 }

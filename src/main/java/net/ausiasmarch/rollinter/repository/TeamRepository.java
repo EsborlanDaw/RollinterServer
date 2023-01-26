@@ -11,6 +11,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 public interface TeamRepository extends JpaRepository<TeamEntity, Long> {
 
     public List <TeamEntity> findAll();
+    public TeamEntity  getByUserId(long lUser);
 
     Page<TeamEntity> findAll(Pageable oPageable);
 

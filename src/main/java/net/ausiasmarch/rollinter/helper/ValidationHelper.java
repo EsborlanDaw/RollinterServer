@@ -97,7 +97,7 @@ public class ValidationHelper {
         Period year = Period.between(newuserdate,actuallocaldate);
 
         if (year.getYears() < 15){
-            throw new ValidationException("Validate error: You must be over 15 years old or you can not have 110 years");
+            throw new ValidationException("Validate error: You must be older than 15 years");
         }
 
     }

@@ -62,8 +62,8 @@ public class CoordinatesEntity {
         this.y = y;
     }
 
-    public Long getRoute() {
-        return route.getId();
+    public RouteEntity getRoute() {
+        return route;
     }
 
     public void setRoute(RouteEntity route) {

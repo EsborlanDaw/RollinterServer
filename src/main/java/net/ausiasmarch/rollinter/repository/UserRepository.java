@@ -13,11 +13,14 @@ public interface UserRepository extends JpaRepository<UserEntity, Long> {
     boolean existsByUsername(String username);
     boolean existsByTeamId(Long id_team);
 
+
     UserEntity findByUsernameAndPassword(String username, String password);
     
     UserEntity findByUsername(String username);
 
     public List <UserEntity> findByTeamId(Long id_team);
+
+    public List <UserEntity> findByTeamIdAndUsertypeId(Long id_team, Long id_usertype);
 
     Page<UserEntity> findByTeamIdAndUsertypeId(Long id_team, Long id_usertype, Pageable oPageable);
 

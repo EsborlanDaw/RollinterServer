@@ -48,7 +48,7 @@ public class TeamController {
         return new ResponseEntity<Page<TeamEntity>>(oTeamService.getPage(oPageable, strFilter, lDeveloper), HttpStatus.OK);
     }
 
-    @PostMapping("/")
+    @PostMapping("")
     public ResponseEntity<Long> create(@RequestBody TeamEntity oTeamEntity) {
         return new ResponseEntity<Long>(oTeamService.create(oTeamEntity), HttpStatus.OK);
     }
@@ -62,6 +62,16 @@ public class TeamController {
     @PutMapping("/")
     public ResponseEntity<Long> update(@RequestBody TeamEntity oTeamEntity) {
         return new ResponseEntity<Long>(oTeamService.update(oTeamEntity), HttpStatus.OK);
+    }
+
+    @PostMapping("/generate")
+    public ResponseEntity<TeamEntity> generateOne() {
+        return new ResponseEntity<>(oTeamService.generateOne(), HttpStatus.OK);
+    }
+
+    @PostMapping("/generate/{amount}")
+    public ResponseEntity<Long> generateSome(@PathVariable Long amount) {
+        return new ResponseEntity<>(oTeamService.generateSome(amount), HttpStatus.OK);
     }
     
 }

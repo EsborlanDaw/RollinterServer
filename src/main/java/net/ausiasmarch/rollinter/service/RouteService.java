@@ -34,10 +34,70 @@ public class RouteService {
         this.oAuthService = oAuthService;
     }
 
+    public void validate(Long id) {
+        if (!oRouteRepository.existsById(id)) {
+            throw new ResourceNotFoundException("id " + id + " not exist");
+        }
+    }
+
+    public void validate(RouteEntity oRouteEntity) {
+        //Validar dificultad y tiempo
+        ValidationHelper.validateStringLength(oRouteEntity.getName(), 2, 50, "campo name de User(el campo debe tener longitud de 2 a 50 caracteres)");
+        
+    }
+
     public RouteEntity get(Long id) {
         //oAuthService.OnlyAdmins();
         return oRouteRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Route with id: " + id + " not found"));
+    }
+
+    public Long count() {
+        //oAuthService.OnlyAdmins();
+        return oRouteRepository.count();
+    }
+
+    public Page<RouteEntity> getPage(Pageable oPageable, String strFilter, Long lUser) {
+        /* Page<RouteEntity> oPage = null;
+        // if (oAuthService.isAdmin()) {
+        if (lUser != null) {
+            if (strFilter == null || strFilter.isEmpty() || strFilter.trim().isEmpty()) {
+                return oRouteRepository.findByUserId(lUser, oPageable);
+            } else {
+                return oRouteRepository.findByUserIdAndNameIgnoreCase(lUser, strFilter, oPageable);
+            }
+        } else {
+            if (strFilter == null || strFilter.isEmpty() || strFilter.trim().isEmpty()) { */
+                return oRouteRepository.findAll(oPageable);
+           /*  } else {
+                return oRouteRepository.findByNameContainingIgnoreCase(strFilter, oPageable);
+            }
+        } */
+    }
+
+    public Long update(RouteEntity oRouteEntity) {
+        validate(oRouteEntity.getId());
+        //oAuthService.OnlyAdmins();
+        return oRouteRepository.save(oRouteEntity).getId();
+    }
+
+    public Long create(RouteEntity oNewRouteEntity) {
+        //oAuthService.OnlyAdmins();
+        //Para crear una ruta tienes que introducir coordenadas
+        validate(oNewRouteEntity);
+        oNewRouteEntity.setId(0L);
+        return oRouteRepository.save(oNewRouteEntity).getId();
+    }
+
+    public Long delete(Long id) {
+        //oAuthService.OnlyAdmins();
+        validate(id);
+        oRouteRepository.deleteById(id);
+        if (oRouteRepository.existsById(id)) {
+            throw new ResourceNotModifiedException("can't remove register " + id);
+        } else {
+            return id;
+        }
     }
     
 }

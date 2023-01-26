@@ -33,5 +33,26 @@ public class CoordinatesController {
     public ResponseEntity<CoordinatesEntity> get(@PathVariable(value = "id") Long id) {
         return new ResponseEntity<CoordinatesEntity>(oCoordinatesService.get(id), HttpStatus.OK);
     }
+
+    @GetMapping("/count")
+    public ResponseEntity<Long> count() {
+        return new ResponseEntity<Long>(oCoordinatesService.count(), HttpStatus.OK);
+    }
+
+    @PutMapping("")
+    public ResponseEntity<Long> update(@RequestBody CoordinatesEntity oCoordinatesEntity) {
+        return new ResponseEntity<Long>(oCoordinatesService.update(oCoordinatesEntity), HttpStatus.OK);
+    }
+
+    @PostMapping("")
+    public ResponseEntity<Long> create(@RequestBody CoordinatesEntity oNewCoordinatesEntity) {
+        return new ResponseEntity<Long>(oCoordinatesService.create(oNewCoordinatesEntity), HttpStatus.OK);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Long> delete(@PathVariable(value = "id") Long id) {
+        return new ResponseEntity<Long>(oCoordinatesService.delete(id), HttpStatus.OK);
+    }
+
     
 }
