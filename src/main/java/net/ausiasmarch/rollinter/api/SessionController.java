@@ -6,7 +6,6 @@ import net.ausiasmarch.rollinter.service.AuthService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -19,15 +18,12 @@ public class SessionController {
     @Autowired
     AuthService oAuthService;
 
-    @GetMapping("")
-    public ResponseEntity<UserEntity> check() {
-        return new ResponseEntity<UserEntity>(oAuthService.check(), HttpStatus.OK);
+    @PostMapping
+    public ResponseEntity<String> login(@org.springframework.web.bind.annotation.RequestBody UserBean oUserBean) {
+        return new ResponseEntity<String>("\"" + oAuthService.login(oUserBean) + "\"", HttpStatus.OK);
     }
 
-    @PostMapping
-    public ResponseEntity<UserEntity> login(@org.springframework.web.bind.annotation.RequestBody UserBean oUserBean) {
-        return new ResponseEntity<UserEntity>(oAuthService.login(oUserBean), HttpStatus.OK);
-    }
+   
 
 //    @PostMapping(produces = "application/json", consumes = "application/json")
 //    public ResponseEntity<UserEntity> login(
@@ -38,12 +34,7 @@ public class SessionController {
 //    {
 //        return new ResponseEntity<UserEntity>(oAuthService.login(oUserBean), HttpStatus.OK);
 //    }
-    @DeleteMapping("")
-    public ResponseEntity<?> logout() {
-        oAuthService.logout();
-        return new ResponseEntity<>(null, HttpStatus.OK);
-    }
-
+  
 
 }
 

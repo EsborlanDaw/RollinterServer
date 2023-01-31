@@ -1,5 +1,7 @@
 package net.ausiasmarch.rollinter.api;
 
+import java.util.List;
+
 import org.springdoc.api.annotations.ParameterObject;
 import org.springframework.data.domain.Pageable;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,10 +31,6 @@ public class CoordinatesController {
     @Autowired
     private CoordinatesService oCoordinatesService;
 
-    @GetMapping("/{id}")
-    public ResponseEntity<CoordinatesEntity> get(@PathVariable(value = "id") Long id) {
-        return new ResponseEntity<CoordinatesEntity>(oCoordinatesService.get(id), HttpStatus.OK);
-    }
 
     @GetMapping("/count")
     public ResponseEntity<Long> count() {
@@ -49,9 +47,17 @@ public class CoordinatesController {
         return new ResponseEntity<Long>(oCoordinatesService.create(oNewCoordinatesEntity), HttpStatus.OK);
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Long> delete(@PathVariable(value = "id") Long id) {
-        return new ResponseEntity<Long>(oCoordinatesService.delete(id), HttpStatus.OK);
+    @PostMapping("/multiple")
+    public ResponseEntity<Long> createMultiple(@RequestBody List <CoordinatesEntity> oNewCoordinatesEntity) {
+        return new ResponseEntity<Long>(oCoordinatesService.createMultiple(oNewCoordinatesEntity), HttpStatus.OK);
+    }
+
+    @GetMapping("")
+    public ResponseEntity<Page<CoordinatesEntity>> getPage(
+            @ParameterObject @PageableDefault(page = 0, size = 10, direction = Sort.Direction.DESC) Pageable oPageable,
+            @RequestParam(name = "filter", required = false) String strFilter,
+            @RequestParam(name = "route", required = false) Long lRoute) {
+        return new ResponseEntity<Page<CoordinatesEntity>>(oCoordinatesService.getPage(oPageable, strFilter, lRoute), HttpStatus.OK);
     }
 
     

@@ -85,8 +85,8 @@ public class RouteEntity {
         this.time = time;
     }
 
-    public Long getUser() {
-        return user.getId();
+    public UserEntity getUser() {
+        return user;
     }
 
     public void setUser(UserEntity user) {

@@ -9,8 +9,12 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import org.springframework.stereotype.Component;
+
 import net.ausiasmarch.rollinter.helper.JwtHelper;
 
+@Component
 public class JWTFilter implements Filter {
 
     @Override
@@ -31,7 +35,7 @@ public class JWTFilter implements Filter {
                 String token = auth.substring(7);
                 try {
                     String nombre = JwtHelper.validateJWT(token);
-                    request.setAttribute("developer", nombre);
+                    request.setAttribute("user", nombre);
                 } catch (Exception e) {
                     throw new ServletException("Invalid token");
                 }
@@ -39,7 +43,7 @@ public class JWTFilter implements Filter {
 
             filterChain.doFilter(servletRequest, servletResponse);
         }
-    }
+     }
 
     @Override
     public void destroy() {

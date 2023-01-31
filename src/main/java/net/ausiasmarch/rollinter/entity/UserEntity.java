@@ -41,7 +41,7 @@ public class UserEntity implements Serializable {
     private String surname2;
 
     @Column(name = "datebirth")
-    @JsonFormat(pattern = "dd-MM-yyyy")
+    @JsonFormat(pattern = "yyyy-MM-dd")
     private Date datebirth;
 
     private String gender;

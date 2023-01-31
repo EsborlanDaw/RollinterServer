@@ -1,79 +1,42 @@
 package net.ausiasmarch.rollinter.service;
 
-import javax.servlet.http.HttpSession;
-import javax.transaction.Transactional;
-import net.ausiasmarch.rollinter.bean.UserBean;
-import net.ausiasmarch.rollinter.exception.UnauthorizedException;
-import net.ausiasmarch.rollinter.entity.UserEntity;
-import net.ausiasmarch.rollinter.helper.RandomHelper;
-import net.ausiasmarch.rollinter.helper.UsertypeHelper;
-import net.ausiasmarch.rollinter.repository.UserRepository;
+import javax.servlet.http.HttpServletRequest;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestBody;
+
+import net.ausiasmarch.rollinter.bean.UserBean;
+import net.ausiasmarch.rollinter.entity.UserEntity;
+import net.ausiasmarch.rollinter.exception.UnauthorizedException;
+import net.ausiasmarch.rollinter.helper.JwtHelper;
+import net.ausiasmarch.rollinter.helper.UsertypeHelper;
+import net.ausiasmarch.rollinter.repository.UserRepository;
 
 @Service
 public class AuthService {
 
     @Autowired
-    HttpSession oHttpSession;
+    private HttpServletRequest oRequest;
 
     @Autowired
     UserRepository oUserRepository;
 
-    /*@Autowired
-    QuestionRepository oQuestionRepository;
-
-    @Autowired
-    PendentRepository oPendentRepository;*/
-
-    public UserEntity login(@RequestBody UserBean oUserBean) {
+    public String login(@RequestBody UserBean oUserBean) {
         if (oUserBean.getPassword() != null) {
             UserEntity oUserEntity = oUserRepository.findByUsernameAndPassword(oUserBean.getUsername(), oUserBean.getPassword());
             if (oUserEntity != null) {
-                oHttpSession.setAttribute("user", oUserEntity);
-                return oUserEntity;
+                return JwtHelper.generateJWT(oUserBean.getUsername(), oUserEntity.getUsertype().getId());
             } else {
-                throw new UnauthorizedException("login or password incorrect");
+                throw new UnauthorizedException("username or password incorrect");
             }
         } else {
             throw new UnauthorizedException("wrong password");
         }
     }
 
-    public void logout() {
-        oHttpSession.invalidate();
-    }
-
-    public UserEntity check() {
-        UserEntity oUserSessionEntity = (UserEntity) oHttpSession.getAttribute("user");
-        if (oUserSessionEntity != null) {
-            return oUserSessionEntity;
-        } else {
-            throw new UnauthorizedException("no active session");
-        }
-    }
-
-    public boolean isLoggedIn() {
-        UserEntity oUserSessionEntity = (UserEntity) oHttpSession.getAttribute("user");
-        if (oUserSessionEntity == null) {
-            return false;
-        } else {
-            return true;
-        }
-    }
-
-    public Long getUserID() {
-        UserEntity oUserSessionEntity = (UserEntity) oHttpSession.getAttribute("user");
-        if (oUserSessionEntity != null) {
-            return oUserSessionEntity.getId();
-        } else {
-            throw new UnauthorizedException("this request is only allowed to auth users");
-        }
-    }
-
     public boolean isAdmin() {
-        UserEntity oUserSessionEntity = (UserEntity) oHttpSession.getAttribute("user");
+        UserEntity oUserSessionEntity = oUserRepository.findByUsername((String) oRequest.getAttribute("user"));
         if (oUserSessionEntity != null) {
             if (oUserSessionEntity.getUsertype().getId().equals(UsertypeHelper.ADMIN)) {
                 return true;
@@ -82,18 +45,8 @@ public class AuthService {
         return false;
     }
 
-    public boolean isUser() {
-        UserEntity oUserSessionEntity = (UserEntity) oHttpSession.getAttribute("user");
-        if (oUserSessionEntity != null) {
-            if (oUserSessionEntity.getUsertype().getId().equals(UsertypeHelper.ROLLUSER)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
     public void OnlyAdmins() {
-        UserEntity oUserSessionEntity = (UserEntity) oHttpSession.getAttribute("user");
+        UserEntity oUserSessionEntity = oUserRepository.findByUsername((String) oRequest.getAttribute("user"));
         if (oUserSessionEntity == null) {
             throw new UnauthorizedException("this request is only allowed to admin role");
         } else {
@@ -103,31 +56,71 @@ public class AuthService {
         }
     }
 
-    public void OnlyUsers() {
-        UserEntity oUserSessionEntity = (UserEntity) oHttpSession.getAttribute("user");
-        if (oUserSessionEntity == null) {
-            throw new UnauthorizedException("this request is only allowed to user role");
+    public boolean isLoggedIn() {
+        String strUser = (String) oRequest.getAttribute("user");
+        if (strUser == null) {
+            return false;
         } else {
-            if (!oUserSessionEntity.getUsertype().getId().equals(UsertypeHelper.ROLLUSER)) {
-                throw new UnauthorizedException("this request is only allowed to user role");
+            return true;
+        }
+    }
+
+    public Long getUserID() {
+        String strUser = (String) oRequest.getAttribute("user");
+        UserEntity oUserEntity = oUserRepository.findByUsername(strUser);
+        if (oUserEntity != null) {
+            return oUserEntity.getId();
+        } else {
+            throw new UnauthorizedException("this request is only allowed to auth Users");
+        }
+    }
+
+
+    public boolean isUser() {
+        String strUser = (String) oRequest.getAttribute("user");
+        UserEntity oUserEntity = oUserRepository.findByUsername(strUser);
+        if (oUserEntity != null) {
+            if (oUserEntity.getUsertype().getId().equals(UsertypeHelper.ROLLUSER)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public void OnlyUsers() {
+        String strUser = (String) oRequest.getAttribute("user");
+        UserEntity oUserEntity = oUserRepository.findByUsername(strUser);
+        if (oUserEntity == null) {
+            throw new UnauthorizedException("this request is only allowed to User role");
+        } else {
+            if (!oUserEntity.getUsertype().getId().equals(UsertypeHelper.ROLLUSER)) {
+                throw new UnauthorizedException("this request is only allowed to User role");
             }
         }
     }
 
     public void OnlyAdminsOrUsers() {
-        UserEntity oUserSessionEntity = (UserEntity) oHttpSession.getAttribute("user");
-        if (oUserSessionEntity == null) {
-            throw new UnauthorizedException("this request is only allowed to user or admin role");
+        String strUser = (String) oRequest.getAttribute("user");
+        UserEntity oUserEntity = oUserRepository.findByUsername(strUser);
+        if (oUserEntity == null) {
+            throw new UnauthorizedException("this request is only allowed to admin or rolluser role");
         } else {
-
+            if (oUserEntity.getUsertype().getId().equals(UsertypeHelper.ADMIN)) {
+            } else {
+                if (oUserEntity.getUsertype().getId().equals(UsertypeHelper.ROLLUSER)) {
+                } else {
+                    throw new UnauthorizedException("this request is only allowed to admin or rolluser role");
+                }
+            }
         }
     }
 
     public void OnlyAdminsOrOwnUsersData(Long id) {
-        UserEntity oUserSessionEntity = (UserEntity) oHttpSession.getAttribute("user");
-        if (oUserSessionEntity != null) {
-            if (oUserSessionEntity.getUsertype().getId().equals(UsertypeHelper.ROLLUSER)) {
-                if (!oUserSessionEntity.getId().equals(id)) {
+        String strUser = (String) oRequest.getAttribute("user");
+        UserEntity oUserEntity = oUserRepository.findByUsername(strUser);
+        if (oUserEntity != null) {
+            if (oUserEntity.getUsertype().getId().equals(UsertypeHelper.ROLLUSER)) {
+                if (!oUserEntity.getId().equals(id)) {
                     throw new UnauthorizedException("this request is only allowed for your own data");
                 }
             }
@@ -136,46 +129,20 @@ public class AuthService {
         }
     }
 
-    /*@Transactional
-    public CaptchaResponse prelogin() {
-
-        Long iRandom = Long.valueOf(RandomHelper.getRandomInt(1, (int) oQuestionRepository.count())); //pte cambiar el 5 
-
-        QuestionEntity oQuestionEntity = oQuestionRepository.findById(iRandom).get();
-
-        PendentEntity oPendentEntity = new PendentEntity();
-        oPendentEntity.setQuestion(oQuestionEntity);
-        PendentEntity oPendentEntityNueva = oPendentRepository.save(oPendentEntity);
-        oPendentEntityNueva.setToken(RandomHelper.getSHA256("" + iRandom + oPendentEntityNueva.getId() + RandomHelper.getRandomInt(1, 9999)));
-        oPendentRepository.save(oPendentEntityNueva);
-
-        CaptchaResponse oCaptchaResponse = new CaptchaResponse();
-        oCaptchaResponse.setQuestion(oPendentEntityNueva.getQuestion().getStatement());
-        oCaptchaResponse.setToken(oPendentEntityNueva.getToken());
-
-        return oCaptchaResponse;
-    }
-
-    public UserEntity loginc(CaptchaBean oCaptchaBean) {
-        if (oCaptchaBean.getPassword() != null) {
-            UserEntity oUserEntity = oUserRepository.findByLoginAndPassword(oCaptchaBean.getLogin(), oCaptchaBean.getPassword());
-            if (oUserEntity != null) {
-                // valida login y pass
-                PendentEntity oPendentEntity = oPendentRepository.findByToken(oCaptchaBean.getToken());
-                if (oPendentEntity.getQuestion().getResponse().toLowerCase().contains(oCaptchaBean.getAnswer().toLowerCase())) {
-                    oHttpSession.setAttribute("User", oUserEntity);
-                    //borrar el reg
-                    oPendentRepository.delete(oPendentEntity);                                        
-                    return oUserEntity;
-                } else {
-                    throw new UnauthorizedException("wrong login or password or response");
+    public void OnlyOwnUsersData(Long id) {
+        String strUser = (String) oRequest.getAttribute("user");
+        UserEntity oUserEntity = oUserRepository.findByUsername(strUser);
+        if (oUserEntity != null) {
+            if (oUserEntity.getUsertype().getId().equals(UsertypeHelper.ROLLUSER)) {
+                if (!oUserEntity.getId().equals(id)) {
+                    throw new UnauthorizedException("this request is only allowed for your own User data");
                 }
             } else {
-                throw new UnauthorizedException("login or password incorrect");
+                throw new UnauthorizedException("this request is only allowed to User role");
             }
         } else {
-            throw new UnauthorizedException("wrong password");
+            throw new UnauthorizedException("this request is only allowed to User role");
         }
-    }*/
+    }
 
 }

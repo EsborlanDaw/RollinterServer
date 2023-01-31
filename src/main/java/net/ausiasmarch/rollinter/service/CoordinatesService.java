@@ -1,5 +1,8 @@
 package net.ausiasmarch.rollinter.service;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.data.domain.Page;
@@ -7,6 +10,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
 import net.ausiasmarch.rollinter.entity.CoordinatesEntity;
+import net.ausiasmarch.rollinter.entity.RouteEntity;
 import net.ausiasmarch.rollinter.exception.ResourceNotFoundException;
 import net.ausiasmarch.rollinter.exception.ResourceNotModifiedException;
 import net.ausiasmarch.rollinter.helper.ValidationHelper;
@@ -44,11 +48,7 @@ public class CoordinatesService {
 
     }
 
-    public CoordinatesEntity get(Long id) {
-        // oAuthService.OnlyAdmins();
-        return oCoordinatesRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Coordinates with id: " + id + " not found"));
-    }
+   
 
     public Long count() {
         // oAuthService.OnlyAdmins();
@@ -76,21 +76,39 @@ public class CoordinatesService {
 
     public Long create(CoordinatesEntity oNewCoordinatesEntity) {
         // oAuthService.OnlyAdmins();
+        List<RouteEntity> routes = oRouteRepository.findAll();
         // Para crear una ruta tienes que introducir coordenadas
         validate(oNewCoordinatesEntity);
         oNewCoordinatesEntity.setId(0L);
+        oNewCoordinatesEntity.setRoute(routes.get(routes.size() - 1));
         return oCoordinatesRepository.save(oNewCoordinatesEntity).getId();
     }
 
-    public Long delete(Long id) {
+    public Long createMultiple( List <CoordinatesEntity> oNewCoordinatesEntity) {
+        /* // oAuthService.OnlyAdmins();
+        RouteEntity route = oRouteRepository.getById(id);
+        // Para crear una ruta tienes que introducir coordenadas
+        for (int i = 0; i < oNewCoordinatesEntity.size(); i++) {
+            oNewCoordinatesEntity.get(i).setId(0L);
+            oNewCoordinatesEntity.get(i).setRoute(route);
+        } */
+        
+        return  (long)(oCoordinatesRepository.saveAll(oNewCoordinatesEntity).size());
+    }
+
+    public void delete(Long id) {
         // oAuthService.OnlyAdmins();
-        validate(id);
-        oCoordinatesRepository.deleteById(id);
-        if (oCoordinatesRepository.existsById(id)) {
-            throw new ResourceNotModifiedException("can't remove register " + id);
-        } else {
-            return id;
+    
+        List <CoordinatesEntity> coordi = new ArrayList();
+
+        if(oCoordinatesRepository.existsByRouteId(id)){
+            coordi = oCoordinatesRepository.findByRouteId(id);
+        for ( int i = 0 ; i < coordi.size(); i++)
+        {    
+            oCoordinatesRepository.deleteById(coordi.get(i).getId());
         }
+        }
+
     }
 
 }

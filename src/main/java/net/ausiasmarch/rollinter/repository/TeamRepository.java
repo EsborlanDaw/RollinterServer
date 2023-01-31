@@ -12,7 +12,7 @@ public interface TeamRepository extends JpaRepository<TeamEntity, Long> {
 
     public List <TeamEntity> findAll();
     public TeamEntity  getByUserId(long lUser);
-
+    public TeamEntity existsByUserId(long lUser);
     Page<TeamEntity> findAll(Pageable oPageable);
 
     Page<TeamEntity> findByUserIdAndNameContainingIgnoreCase(long lUser, String strFilter, Pageable oPageable);

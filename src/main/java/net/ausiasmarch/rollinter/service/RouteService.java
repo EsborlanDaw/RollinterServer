@@ -29,6 +29,9 @@ public class RouteService {
     UserService oUserService;
 
     @Autowired
+    CoordinatesService oCoordinatesService;
+
+    @Autowired
     public RouteService(RouteRepository oRouteRepository, AuthService oAuthService) {
         this.oRouteRepository = oRouteRepository;
         this.oAuthService = oAuthService;
@@ -84,14 +87,16 @@ public class RouteService {
     public Long create(RouteEntity oNewRouteEntity) {
         //oAuthService.OnlyAdmins();
         //Para crear una ruta tienes que introducir coordenadas
-        validate(oNewRouteEntity);
+        
         oNewRouteEntity.setId(0L);
+        validate(oNewRouteEntity);
         return oRouteRepository.save(oNewRouteEntity).getId();
     }
 
     public Long delete(Long id) {
         //oAuthService.OnlyAdmins();
         validate(id);
+        oCoordinatesService.delete(id);
         oRouteRepository.deleteById(id);
         if (oRouteRepository.existsById(id)) {
             throw new ResourceNotModifiedException("can't remove register " + id);
