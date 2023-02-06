@@ -22,5 +22,8 @@ public interface RouteRepository extends JpaRepository<RouteEntity, Long> {
     Page<RouteEntity> findByUserIdAndNameIgnoreCase(Long id_user, String strFilter, Pageable oPageable);
 
     Page<RouteEntity> findByNameContainingIgnoreCase(String strFilter, Pageable oPageable);
+
+    public Page<RouteEntity> findByNameContainingIgnoreCaseOrDificultyContainingIgnoreCase(String strFilter,
+            String strFilter2, Pageable oPageable);
     
 }

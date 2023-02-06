@@ -59,23 +59,23 @@ public class RouteService {
         return oRouteRepository.count();
     }
 
-    public Page<RouteEntity> getPage(Pageable oPageable, String strFilter, Long lUser) {
-        /* Page<RouteEntity> oPage = null;
-        // if (oAuthService.isAdmin()) {
-        if (lUser != null) {
-            if (strFilter == null || strFilter.isEmpty() || strFilter.trim().isEmpty()) {
-                return oRouteRepository.findByUserId(lUser, oPageable);
-            } else {
-                return oRouteRepository.findByUserIdAndNameIgnoreCase(lUser, strFilter, oPageable);
+    public Page<RouteEntity> getPage(Pageable oPageable, String strFilter, Long id_user) {
+        Page<RouteEntity> oPage = null;
+        ValidationHelper.validateRPP(oPageable.getPageSize());
+        if (strFilter == null || strFilter.length() == 0) {
+            if (id_user == null) {
+                    return oRouteRepository.findAll(oPageable);
+                } else {
+                    return oRouteRepository.findByUserId(id_user, oPageable);
             }
-        } else {
-            if (strFilter == null || strFilter.isEmpty() || strFilter.trim().isEmpty()) { */
+            } else if (strFilter != null || strFilter.length() != 0) {
+                return oRouteRepository.findByNameContainingIgnoreCaseOrDificultyContainingIgnoreCase(strFilter, strFilter, oPageable);
+            }else {
                 return oRouteRepository.findAll(oPageable);
-           /*  } else {
-                return oRouteRepository.findByNameContainingIgnoreCase(strFilter, oPageable);
             }
-        } */
     }
+
+
 
     public Long update(RouteEntity oRouteEntity) {
         validate(oRouteEntity.getId());
