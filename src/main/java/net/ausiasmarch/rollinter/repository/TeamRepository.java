@@ -20,5 +20,6 @@ public interface TeamRepository extends JpaRepository<TeamEntity, Long> {
     Page<TeamEntity> findByNameContainingIgnoreCase(String strFilter, Pageable oPageable);
 
     Page<TeamEntity> findByUserId(long lUser, Pageable oPageable);
+    public boolean existsByName(String name);
 
 }

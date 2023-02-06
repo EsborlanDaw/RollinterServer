@@ -5,6 +5,7 @@ import net.ausiasmarch.rollinter.entity.UserEntity;
 import net.ausiasmarch.rollinter.exception.CannotPerformOperationException;
 import net.ausiasmarch.rollinter.exception.ResourceNotFoundException;
 import net.ausiasmarch.rollinter.exception.ResourceNotModifiedException;
+import net.ausiasmarch.rollinter.exception.ValidationException;
 import net.ausiasmarch.rollinter.helper.RandomHelper;
 import net.ausiasmarch.rollinter.helper.ValidationHelper;
 import net.ausiasmarch.rollinter.repository.UserRepository;
@@ -54,7 +55,10 @@ public class TeamService {
 
     public void validate(TeamEntity oTeamEntity) {
         ValidationHelper.validateLogin(oTeamEntity.getName(),
-                "campo name de User(el campo debe tener longitud de 2 a 50 caracteres)");
+                "campo name de name (el campo debe tener longitud de 2 a 50 caracteres)");
+        if(oTeamRepository.existsByName(oTeamEntity.getName())){
+            throw new ValidationException("Name exists, choose another name");
+        }
 
     }
 
