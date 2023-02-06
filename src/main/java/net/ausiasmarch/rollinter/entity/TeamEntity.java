@@ -1,5 +1,6 @@
 package net.ausiasmarch.rollinter.entity;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -15,6 +16,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @Entity
@@ -32,6 +34,8 @@ public class TeamEntity {
     @OneToMany(mappedBy = "team", fetch = FetchType.LAZY)
     private final List<UserEntity> users;
 
+    @Column(name = "creationdate")
+    @JsonFormat(pattern="yyyy-MM-dd  HH:mm:ss")
     private LocalDateTime creationdate;
 
     

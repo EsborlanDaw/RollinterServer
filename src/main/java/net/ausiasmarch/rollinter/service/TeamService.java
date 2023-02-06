@@ -48,7 +48,7 @@ public class TeamService {
         try {
             return oTeamRepository.findById(id).get();
         } catch (Exception ex) {
-            throw new ResourceNotFoundException("id " + id + " not exist");
+            throw new ResourceNotFoundException("Id " + id + " not exist");
         }
     }
 
@@ -60,18 +60,18 @@ public class TeamService {
 
     public void validate(Long id) {
         if (!oTeamRepository.existsById(id)) {
-            throw new ResourceNotFoundException("id " + id + " not exist");
+            throw new ResourceNotFoundException("Id " + id + " not exist");
         }
     }
 
     public Long delete(Long id) {
-        // oAuthService.OnlyAdmins();
+        oAuthService.OnlyAdmins();
         validate(id);
         oUserService.updateTeam(oTeamRepository.getById(id));
         oTeamRepository.deleteById(id);
 
         if (oTeamRepository.existsById(id)) {
-            throw new ResourceNotModifiedException("can't remove register " + id);
+            throw new ResourceNotModifiedException("Can't remove register " + id);
         } else {
             return id;
         }
@@ -79,7 +79,7 @@ public class TeamService {
 
     public Page<TeamEntity> getPage(Pageable oPageable, String strFilter, Long lUser) {
         Page<TeamEntity> oPage = null;
-        // if (oAuthService.isAdmin()) {
+        oAuthService.OnlyAdminsOrUsers();
         if (lUser != null) {
             if (strFilter == null || strFilter.isEmpty() || strFilter.trim().isEmpty()) {
                 return oTeamRepository.findByUserId(lUser, oPageable);
@@ -92,19 +92,12 @@ public class TeamService {
             } else {
                 return oTeamRepository.findByNameContainingIgnoreCase(strFilter, oPageable);
             }
-        }
-        /*
-         * }
-         * else {
-         * throw new
-         * UnauthorizedException("this request is only allowed to admin role");
-         * }
-         */
+        }     
 
     }
 
     public Long create(TeamEntity oNewTeamEntity) {
-        // oAuthService.OnlyAdmins();
+        oAuthService.OnlyAdminsOrUsers();
         validate(oNewTeamEntity);
         oNewTeamEntity.setCreationdate(LocalDateTime.now());
         oTeamRepository.save(oNewTeamEntity);
@@ -120,7 +113,7 @@ public class TeamService {
     }
 
     public Long update(TeamEntity oTeamEntity) {
-        // oAuthService.OnlyAdmins();
+        oAuthService.OnlyAdmins();
         validate(oTeamEntity.getId());
         TeamEntity oOldTeamEntity = oTeamRepository.getById(oTeamEntity.getId());
         oTeamEntity.setUser(oUserRepository.getById(oOldTeamEntity.getUser()));
@@ -150,22 +143,37 @@ public class TeamService {
     }
 
     private TeamEntity generateTeam() {
+
+        oAuthService.OnlyAdmins();
         TeamEntity oTeamEntity = new TeamEntity();
 
         oTeamEntity.setName("Roll" + names.get(RandomHelper.getRandomInt(0, names.size() - 1)) + ""
                 + RandomHelper.getRandomInt(0, 300000));
 
-        List<UserEntity> users = oUserService.users();
+        List<UserEntity> user = oUserService.users();
 
         oTeamEntity.setCreationdate(LocalDateTime.now());
 
-        oTeamEntity.setUser(users.get(RandomHelper.getRandomInt(0, users.size() - 1)));
+        oTeamEntity.setUser(user.get(RandomHelper.getRandomInt(0, user.size() - 1)));
 
         oTeamRepository.save(oTeamEntity);
 
         UserEntity oUserEntity = (oUserRepository.getById(oTeamEntity.getUser()));
         oUserEntity.setTeam(oTeamEntity);
         oUserRepository.save(oUserEntity);
+
+        List<UserEntity> users = oUserService.users();
+        int total = RandomHelper.getRandomInt(0, users.size() - 1);
+        
+        for (int i = 0; i < total; i++) {
+            users = oUserService.users();
+            UserEntity userteam = (users.get(RandomHelper.getRandomInt(0, total)));
+
+            userteam.setTeam(oTeamEntity);
+            oUserRepository.save(oUserEntity);
+            total--;
+            
+        }
 
         return oTeamEntity;
     }
@@ -176,7 +184,7 @@ public class TeamService {
     }
 
     public Long generateSome(Long amount) {
-        // oAuthService.OnlyAdmins();
+        oAuthService.OnlyAdmins();
         List<UserEntity> users = oUserService.users();
         int total = users.size();
         if (total >= amount) {
@@ -187,7 +195,7 @@ public class TeamService {
 
         } else {
             throw new CannotPerformOperationException(
-                    "There is enough users in data base to create " + amount + "teams");
+                    "There is enough users in data base to create " + amount + " teams");
         }
 
         return oTeamRepository.count();

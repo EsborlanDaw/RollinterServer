@@ -7,8 +7,10 @@ import java.time.LocalDateTime;
 import java.time.Period;
 import java.time.ZoneId;
 import java.util.Date;
+import java.util.List;
 
 import ch.qos.logback.classic.pattern.DateConverter;
+import net.ausiasmarch.rollinter.entity.CoordinatesEntity;
 import net.ausiasmarch.rollinter.exception.ValidationException;
 
 public class ValidationHelper {
@@ -45,7 +47,7 @@ public class ValidationHelper {
         java.util.regex.Pattern p = java.util.regex.Pattern.compile(ePattern);
         java.util.regex.Matcher m = p.matcher(email);
         if (!m.matches()) {
-            throw new ValidationException("error de validación: " + error);
+            throw new ValidationException("error: " + error);
         }
     }
 
@@ -55,21 +57,21 @@ public class ValidationHelper {
         java.util.regex.Pattern p = java.util.regex.Pattern.compile(ePattern);
         java.util.regex.Matcher m = p.matcher(strLogin);
         if (!m.matches()) {
-            throw new ValidationException("error de validación: " + error);
+            throw new ValidationException("error: " + error);
         }
     }
 
     public static void validateRange(int iNumber, int iMin, int iMax, String error) {
         if (iNumber >= iMin && iNumber <= iMax) {
         } else {
-            throw new ValidationException("error de validación: " + error);
+            throw new ValidationException("error: " + error);
         }
     }
 
     public static void validateRange(double iNumber, double iMin, double iMax, String error) {
         if (iNumber >= iMin && iNumber <= iMax) {
         } else {
-            throw new ValidationException("error de validación: " + error);
+            throw new ValidationException("error: " + error);
         }
     }
 
@@ -78,7 +80,7 @@ public class ValidationHelper {
         Long lDur2 = Duration.between(oDate, oDateEnd).toMillis();
         if (lDur1 > 0L && lDur2 > 0L) {
         } else {
-            throw new ValidationException("error de validación: " + error);
+            throw new ValidationException("error: " + error);
         }
     }
 
@@ -97,7 +99,15 @@ public class ValidationHelper {
         Period year = Period.between(newuserdate,actuallocaldate);
 
         if (year.getYears() < 15){
-            throw new ValidationException("Validate error: You must be older than 15 years");
+            throw new ValidationException("You must be older than 15 years old");
+        }
+
+    }
+
+    public static void checkCoordinates ( List <CoordinatesEntity> oNewCoordinatesEntity){
+        if (oNewCoordinatesEntity.size() > 11)
+        {
+            throw new ValidationException("Only 10 points are allowed");
         }
 
     }

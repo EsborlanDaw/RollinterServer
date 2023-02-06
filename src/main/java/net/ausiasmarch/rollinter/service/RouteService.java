@@ -45,12 +45,11 @@ public class RouteService {
 
     public void validate(RouteEntity oRouteEntity) {
         //Validar dificultad y tiempo
-        ValidationHelper.validateStringLength(oRouteEntity.getName(), 2, 50, "campo name de User(el campo debe tener longitud de 2 a 50 caracteres)");
+        ValidationHelper.validateStringLength(oRouteEntity.getName(), 2, 50, "campo name de Route(el campo debe tener longitud de 2 a 50 caracteres)");
         
     }
 
     public RouteEntity get(Long id) {
-        //oAuthService.OnlyAdmins();
         return oRouteRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Route with id: " + id + " not found"));
     }
@@ -80,12 +79,12 @@ public class RouteService {
 
     public Long update(RouteEntity oRouteEntity) {
         validate(oRouteEntity.getId());
-        //oAuthService.OnlyAdmins();
+        oAuthService.OnlyAdmins();
         return oRouteRepository.save(oRouteEntity).getId();
     }
 
     public Long create(RouteEntity oNewRouteEntity) {
-        //oAuthService.OnlyAdmins();
+        oAuthService.OnlyAdminsOrUsers();
         //Para crear una ruta tienes que introducir coordenadas
         
         oNewRouteEntity.setId(0L);
@@ -94,7 +93,7 @@ public class RouteService {
     }
 
     public Long delete(Long id) {
-        //oAuthService.OnlyAdmins();
+        oAuthService.OnlyAdminsOrOwnUsersData(id);
         validate(id);
         oCoordinatesService.delete(id);
         oRouteRepository.deleteById(id);

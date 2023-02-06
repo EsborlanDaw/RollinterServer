@@ -42,14 +42,15 @@ public class CoordinatesController {
         return new ResponseEntity<Long>(oCoordinatesService.update(oCoordinatesEntity), HttpStatus.OK);
     }
 
-    @PostMapping("")
-    public ResponseEntity<Long> create(@RequestBody CoordinatesEntity oNewCoordinatesEntity) {
-        return new ResponseEntity<Long>(oCoordinatesService.create(oNewCoordinatesEntity), HttpStatus.OK);
-    }
-
+   
     @PostMapping("/multiple")
     public ResponseEntity<Long> createMultiple(@RequestBody List <CoordinatesEntity> oNewCoordinatesEntity) {
         return new ResponseEntity<Long>(oCoordinatesService.createMultiple(oNewCoordinatesEntity), HttpStatus.OK);
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<List<CoordinatesEntity>> get(@PathVariable(value = "id") Long id) {
+        return new ResponseEntity <List<CoordinatesEntity>> (oCoordinatesService.get(id), HttpStatus.OK);
     }
 
     @GetMapping("")

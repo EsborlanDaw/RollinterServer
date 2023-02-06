@@ -26,7 +26,7 @@ public class JwtHelper {
         return Keys.hmacShaKeyFor((SECRET + ISSUER + SECRET).getBytes());
     }
 
-    public static String generateJWT(String user, long usertype) {
+    public static String generateJWT(String user, Long usertype) {
 
         Date currentTime = Date.from(Instant.now());
         Date expiryTime = Date.from(Instant.now().plus(Duration.ofSeconds(9600)));

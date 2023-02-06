@@ -28,7 +28,7 @@ public interface UserRepository extends JpaRepository<UserEntity, Long> {
 
     Page<UserEntity> findByTeamId(Long id_team, Pageable oPageable);
                         
-    Page<UserEntity> findByNameIgnoreCaseContainingOrSurname1IgnoreCaseContainingOrSurname2IgnoreCaseContaining(String strFilterName, String strFilterSurname1, String strFilterLast_name, Pageable oPageable);
+    Page<UserEntity> findByNameIgnoreCaseContainingOrSurname1IgnoreCaseContainingOrSurname2IgnoreCaseContainingOrUsernameIgnoreCaseContainingOrEmailIgnoreCaseContaining(String strFilterName, String strFilterSurname1, String strFilterLast_name,String strFilterUsername,String strFilterEmail, Pageable oPageable);
 
     Page<UserEntity> findByNameIgnoreCaseContainingOrSurname1IgnoreCaseContainingOrSurname2IgnoreCaseContainingAndUsertypeId(String strFilterName, String strFilterSurname1, String strFilterLast_name, Long id_usertype, Pageable oPageable);
 

@@ -83,14 +83,14 @@ public class UserService {
         ValidationHelper.validateEmail(oUserEntity.getEmail(), "campo email de User");
         ValidationHelper.validateLogin(oUserEntity.getUsername(), "campo username de User");
         if (oUserRepository.existsByUsername(oUserEntity.getUsername())) {
-            throw new ValidationException("username exists");
+            throw new ValidationException("Username exists");
         }
         oUsertypeService.validate(oUserEntity.getUsertype().getId());
 
     }
 
     public UserEntity get(Long id) {
-        // oAuthService.OnlyAdmins();
+        oAuthService.OnlyAdminsOrOwnUsersData(id);;
         try {
             return oUserRepository.findById(id).get();
         } catch (Exception ex) {
@@ -99,7 +99,7 @@ public class UserService {
     }
 
     public Page<UserEntity> getPage(Pageable oPageable, String strFilter, Long id_team, Long id_usertype) {
-        // oAuthService.OnlyAdmins();
+        oAuthService.OnlyAdminsOrUsers();
         ValidationHelper.validateRPP(oPageable.getPageSize());
         if (strFilter == null || strFilter.length() == 0) {
             if (id_team == null) {
@@ -119,8 +119,8 @@ public class UserService {
             if (id_team == null) {
                 if (id_usertype == null) {
                     return oUserRepository
-                            .findByNameIgnoreCaseContainingOrSurname1IgnoreCaseContainingOrSurname2IgnoreCaseContaining(
-                                    strFilter, strFilter, strFilter, oPageable);
+                            .findByNameIgnoreCaseContainingOrSurname1IgnoreCaseContainingOrSurname2IgnoreCaseContainingOrUsernameIgnoreCaseContainingOrEmailIgnoreCaseContaining(
+                                    strFilter, strFilter, strFilter,strFilter, strFilter, oPageable);
                 } else {
                     return oUserRepository
                             .findByNameIgnoreCaseContainingOrSurname1IgnoreCaseContainingOrSurname2IgnoreCaseContainingAndUsertypeId(
@@ -142,20 +142,20 @@ public class UserService {
     }
 
     public Long count() {
-        // oAuthService.OnlyAdmins();
+        oAuthService.OnlyAdmins();
         return oUserRepository.count();
     }
 
     public Long update(UserEntity oUserEntity) {
         validate(oUserEntity.getId());
-        // oAuthService.OnlyAdmins();
+        oAuthService.OnlyAdminsOrOwnUsersData(oUserEntity.getId());
         UserEntity oOldUserEntity = oUserRepository.getById(oUserEntity.getId());
         oUserEntity.setPassword(oOldUserEntity.getPassword());
         return oUserRepository.save(oUserEntity).getId();
     }
 
     public void updateTeam(TeamEntity oTeamEntity) {
-
+       
         List<UserEntity> oUserEntities = new ArrayList();
 
         if (oUserRepository.existsByTeamId((oTeamEntity.getId()))) {
@@ -169,7 +169,7 @@ public class UserService {
     }
 
     public Long create(UserEntity oNewUserEntity) {
-        // oAuthService.OnlyAdmins();
+        oAuthService.OnlyAdminsOrUsers();
         validate(oNewUserEntity);
         oNewUserEntity.setId(0L);
         oNewUserEntity.setPassword(ROLLINTER_DEFAULT_PASSWORD);
@@ -178,7 +178,7 @@ public class UserService {
     }
 
     public Long delete(Long id) {
-        // oAuthService.OnlyAdmins();
+        oAuthService.OnlyAdminsOrOwnUsersData(id);
         validate(id);
 
         TeamEntity oTeamEntity = oTeamRepository.getByUserId(id);
@@ -213,6 +213,7 @@ public class UserService {
 
     // necesario para coger el id para el generate del team
     public UserEntity getOneRandom() {
+        oAuthService.OnlyAdmins();
         if (count() > 0) {
             UserEntity oUserEntity = null;
             int iPosicion = RandomHelper.getRandomInt(0, (int) oUserRepository.count() - 1);
@@ -227,6 +228,7 @@ public class UserService {
     }
 
     private UserEntity generateUser() {
+        
         UserEntity oUserEntity = new UserEntity();
 
         oUserEntity.setName(names.get(RandomHelper.getRandomInt(0, names.size() - 1)));
@@ -234,7 +236,8 @@ public class UserService {
         oUserEntity.setSurname2(surnames2.get(RandomHelper.getRandomInt(0, names.size() - 1)));
 
         oUserEntity.setUsername((oUserEntity.getName().toLowerCase()
-                + oUserEntity.getSurname1().toLowerCase()).replaceAll("\\s", ""));
+                + oUserEntity.getSurname1().toLowerCase())+ ""
+                + RandomHelper.getRandomInt(0, 300000));
         oUserEntity.setEmail(oUserEntity.getUsername() + "@rollinter.net");
         oUserEntity.setGender(gender.get(RandomHelper.getRandomInt(0, 1)));
         oUserEntity.setPassword(ROLLINTER_DEFAULT_PASSWORD);
@@ -256,11 +259,13 @@ public class UserService {
     }
 
     public UserEntity generateOne() {
-        // oAuthService.OnlyAdmins();
+        oAuthService.OnlyAdmins();
         return oUserRepository.save(generateUser());
     }
 
     public Long generateSome(Long amount) {
+
+        oAuthService.OnlyAdmins();
         List<UserEntity> UserToSave = new ArrayList<>();
         for (int i = 0; i < amount; i++) {
             UserToSave.add(generateUser());

@@ -48,6 +48,14 @@ public class CoordinatesService {
 
     }
 
+    public List <CoordinatesEntity> get(Long id) {
+
+
+        List <CoordinatesEntity> oCoordinatesEntities = oCoordinatesRepository.findByRouteId(id);
+       
+        return oCoordinatesEntities;
+    }
+
    
 
     public Long count() {
@@ -74,17 +82,14 @@ public class CoordinatesService {
         return oCoordinatesRepository.save(oCoordinatesEntity).getId();
     }
 
-    public Long create(CoordinatesEntity oNewCoordinatesEntity) {
-        // oAuthService.OnlyAdmins();
-        List<RouteEntity> routes = oRouteRepository.findAll();
-        // Para crear una ruta tienes que introducir coordenadas
-        validate(oNewCoordinatesEntity);
-        oNewCoordinatesEntity.setId(0L);
-        oNewCoordinatesEntity.setRoute(routes.get(routes.size() - 1));
-        return oCoordinatesRepository.save(oNewCoordinatesEntity).getId();
-    }
+    
+
 
     public Long createMultiple( List <CoordinatesEntity> oNewCoordinatesEntity) {
+
+      
+        oAuthService.OnlyAdminsOrUsers();
+        ValidationHelper.checkCoordinates(oNewCoordinatesEntity);
         /* // oAuthService.OnlyAdmins();
         RouteEntity route = oRouteRepository.getById(id);
         // Para crear una ruta tienes que introducir coordenadas
@@ -94,10 +99,13 @@ public class CoordinatesService {
         } */
         
         return  (long)(oCoordinatesRepository.saveAll(oNewCoordinatesEntity).size());
+    
+    
     }
 
     public void delete(Long id) {
-        // oAuthService.OnlyAdmins();
+        
+        oAuthService.OnlyAdminsOrOwnUsersData(id);
     
         List <CoordinatesEntity> coordi = new ArrayList();
 

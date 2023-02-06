@@ -46,28 +46,28 @@ public class UsertypeService {
     }
 
     public Page<UsertypeEntity> getPage(int page, int size) {
-       //oAuthService.OnlyAdmins();
+       oAuthService.OnlyAdmins();
         Pageable oPageable = PageRequest.of(page, size);
         
             return oUsertypeRepository.findAll(oPageable);
     }
 
     public Long update(UsertypeEntity oUsertypeEntity) {
-       //oAuthService.OnlyAdmins();
+       oAuthService.OnlyAdmins();
         validate(oUsertypeEntity.getId());
         oUsertypeRepository.save(oUsertypeEntity);
         return oUsertypeEntity.getId();
     }
 
     public Long create(UsertypeEntity oNewUsertypeEntity) {
-        //oAuthService.OnlyAdmins();
+        oAuthService.OnlyAdmins();
         validate(oNewUsertypeEntity);
         oNewUsertypeEntity.setId(0L);
         return oUsertypeRepository.save(oNewUsertypeEntity).getId();
     }
 
     public Long delete(Long id) {
-        //oAuthService.OnlyAdmins();
+        oAuthService.OnlyAdmins();
         validate(id);
         oUsertypeRepository.deleteById(id);
         if (oUsertypeRepository.existsById(id)) {

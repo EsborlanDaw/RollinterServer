@@ -31,7 +31,7 @@ public class AuthService {
                 throw new UnauthorizedException("username or password incorrect");
             }
         } else {
-            throw new UnauthorizedException("wrong password");
+            throw new UnauthorizedException("password can not be empty");
         }
     }
 
