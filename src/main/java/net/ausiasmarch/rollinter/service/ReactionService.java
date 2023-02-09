@@ -66,20 +66,47 @@ public class ReactionService {
         return oReactionRepository.count();
     }
 
-    public Page<ReactionEntity> getPage(Pageable oPageable, Long strFilter, Long id_user, Long id_route) {
-        Page<ReactionEntity> oPage = null;
+    public Page<ReactionEntity> getPage(Pageable oPageable, String strFilter, Long id_route, Long id_user) {
+        oAuthService.OnlyAdminsOrUsers();
         ValidationHelper.validateRPP(oPageable.getPageSize());
-        if (strFilter == null) {
-            if (id_user != null) {
-                return oReactionRepository.findByUserId(id_user, oPageable);
-            } else if (id_route != null) {
-                return oReactionRepository.findByRouteId(id_user, oPageable);
+        if (strFilter == null || strFilter.length() == 0) {
+            if (id_user == null) {
+                if (id_route == null) {
+                    return oReactionRepository.findAll(oPageable);
+                } else {
+                    return oReactionRepository.findByRouteId(id_route, oPageable);
+                }
             } else {
-                return oReactionRepository.findAll(oPageable);
+                if (id_route == null) {
+                    return oReactionRepository.findByUserId(id_user, oPageable);
+                } else {
+                    return oReactionRepository.findByRouteIdAndUserId(id_route, id_user, oPageable);
+                }
             }
         } else {
-            return oReactionRepository.findAll(oPageable);
+            if (id_user == null) {
+                if (id_route == null) {
+                    return oReactionRepository
+                            .findByLikenumber(
+                                     strFilter, oPageable);
+                } else {
+                    return oReactionRepository
+                            .findByLikenumberAndRouteId(
+                                     strFilter, id_route, oPageable);
+                }
+            } else {
+                if (id_route == null) {
+                    return oReactionRepository
+                            .findByLikenumberAndUserId(
+                                     strFilter, id_user, oPageable);
+                } else {
+                    return oReactionRepository
+                            .findByLikenumberAndRouteIdAndUserId(
+                                    strFilter, id_route, id_user, oPageable);
+                }
+            }
         }
+
     }
 
     /*

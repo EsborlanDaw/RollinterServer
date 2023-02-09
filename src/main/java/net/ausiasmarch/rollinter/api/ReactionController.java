@@ -35,7 +35,7 @@ public class ReactionController {
     @GetMapping("/")
     public ResponseEntity<Page<ReactionEntity>> getPage(
             @ParameterObject @PageableDefault(page = 0, size = 10, direction = Sort.Direction.DESC) Pageable oPageable,
-            @RequestParam(name = "filter", required = false) Long strFilter,
+            @RequestParam(name = "filter", required = false) String strFilter,
             @RequestParam(value = "user", required = false) Long id_user,
             @RequestParam(value = "route", required = false) Long id_route) {
         return new ResponseEntity<>(oReactionService.getPage(oPageable, strFilter, id_user, id_route), HttpStatus.OK);

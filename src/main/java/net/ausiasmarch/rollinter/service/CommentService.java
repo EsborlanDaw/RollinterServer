@@ -10,11 +10,13 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
 import net.ausiasmarch.rollinter.entity.CommentEntity;
+import net.ausiasmarch.rollinter.entity.UserEntity;
 import net.ausiasmarch.rollinter.exception.ResourceNotFoundException;
 import net.ausiasmarch.rollinter.exception.ResourceNotModifiedException;
 import net.ausiasmarch.rollinter.helper.UsertypeHelper;
 import net.ausiasmarch.rollinter.helper.ValidationHelper;
 import net.ausiasmarch.rollinter.repository.CommentRepository;
+import net.ausiasmarch.rollinter.repository.UserRepository;
 import net.ausiasmarch.rollinter.exception.ValidationException;
 
 
@@ -22,12 +24,17 @@ import net.ausiasmarch.rollinter.exception.ValidationException;
 
 public class CommentService {
 
-    private final CommentRepository oCommentRepository;
+    @Autowired
+    CommentRepository oCommentRepository;
+
+    @Autowired
+    UserRepository oUserRepository;
+
     private final AuthService oAuthService;
 
     @Autowired
-    public CommentService(CommentRepository oCommentRepository, AuthService oAuthService) {
-        this.oCommentRepository = oCommentRepository;
+    public CommentService(AuthService oAuthService) {
+        
         this.oAuthService = oAuthService;
     }
 
@@ -130,15 +137,17 @@ public class CommentService {
     public Long delete(Long id, Long id_user) {
         oAuthService.OnlyAdminsOrOwnUsersData(id_user);
         
-        CommentEntity oComentEntity = oCommentRepository.getById(id);
-        if (oComentEntity.getUser().getId() == id_user || id_user == UsertypeHelper.ADMIN ) {
-            oCommentRepository.deleteById(id);
-            return id;
-            
+        CommentEntity oCommentEntity = oCommentRepository.getById(id);
+        UserEntity oUserEntity = oUserRepository.getById(id_user);
+        if (oUserEntity.getUsertype().getId() == UsertypeHelper.ADMIN || oCommentEntity.getUser().getId() == oUserEntity.getId()) {
+            oCommentRepository.delete(oCommentEntity);
+        } 
+
+        if (oCommentRepository.existsById(id)) {
+            throw new ResourceNotModifiedException(oCommentEntity.getUser().getId()+ " can't remove register " + id + " because you have not written it " + id_user);
         } else {
-            throw new ResourceNotModifiedException("can't remove register " + id + " because you have not write it");
-            
-        }
+            return id;
+        } 
     }
 
     public Long deleteByRouteId(Long id) {

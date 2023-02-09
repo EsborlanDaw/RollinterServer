@@ -210,6 +210,7 @@ public class UserService {
         RouteEntity oRouteEntity = oRouteRepository.findByUserId(id);
         oReactionService.deleteByUserId(id);
         oCommentService.deleteByUserId(id);
+        oChat_TeamService.deleteByUserId(id);
 
         if (oRouteEntity != null){
             oRouteService.delete(oRouteEntity.getId());

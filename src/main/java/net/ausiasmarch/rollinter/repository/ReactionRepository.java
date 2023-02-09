@@ -21,5 +21,16 @@ public interface ReactionRepository extends JpaRepository<ReactionEntity, Long> 
     public List <ReactionEntity> findByUserId(Long id);
 
     Page<ReactionEntity> findByRouteId(Long id_route, Pageable oPageable);
+
+    Page<ReactionEntity> findByRouteIdAndUserId(Long id_route, Long id_user, Pageable oPageable);
+
+    Page<ReactionEntity> findByLikenumber(String strFilter, Pageable oPageable);
+
+    Page<ReactionEntity> findByLikenumberAndRouteId(String strFilter, Long id_route, Pageable oPageable);
+
+    Page<ReactionEntity> findByLikenumberAndUserId(String strFilter, Long id_user, Pageable oPageable);
+
+    Page<ReactionEntity> findByLikenumberAndRouteIdAndUserId(String strFilter, Long id_route, Long id_user,
+            Pageable oPageable);
     
 }

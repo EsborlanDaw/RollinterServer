@@ -16,7 +16,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @Entity
-@Table(name = "chat_team")
+@Table(name = "chatteam")
 @JsonIgnoreProperties({ "hibernateLazyInitializer", "handler" })
 
 public class Chat_TeamEntity {
@@ -25,7 +25,7 @@ public class Chat_TeamEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String text_chat;
+    private String textchat;
 
     @Column(name = "creationdate")
     @JsonFormat(pattern="yyyy-MM-dd  HH:mm:ss")
@@ -49,12 +49,12 @@ public class Chat_TeamEntity {
         this.id = id;
     }
 
-    public String getText_chat() {
-        return text_chat;
+    public String getTextchat() {
+        return textchat;
     }
 
-    public void setText_chat(String text_chat) {
-        this.text_chat = text_chat;
+    public void setTextchat(String textchat) {
+        this.textchat = textchat;
     }
 
     public LocalDateTime getCreationdate() {

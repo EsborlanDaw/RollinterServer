@@ -39,6 +39,9 @@ public class TeamService {
     UserService oUserService;
 
     @Autowired
+    Chat_TeamService oChat_TeamService;
+
+    @Autowired
     public TeamService(TeamRepository oTeamRepository, AuthService oAuthService) {
         this.oTeamRepository = oTeamRepository;
         this.oAuthService = oAuthService;
@@ -73,6 +76,7 @@ public class TeamService {
         validate(id);
         oUserService.updateTeam(oTeamRepository.getById(id));
         oTeamRepository.deleteById(id);
+        oChat_TeamService.deleteByTeamId(id);
 
         if (oTeamRepository.existsById(id)) {
             throw new ResourceNotModifiedException("Can't remove register " + id);
