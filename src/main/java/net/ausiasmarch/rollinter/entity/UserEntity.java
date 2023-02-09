@@ -2,10 +2,6 @@ package net.ausiasmarch.rollinter.entity;
 
 import java.io.Serializable;
 import java.util.Date;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -15,8 +11,6 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.PreRemove;
 import javax.persistence.Table;
-
-import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -66,15 +60,29 @@ public class UserEntity implements Serializable {
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
     private final List<RouteEntity> routes;
 
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+    private final List<ReactionEntity> reactions;
+
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+    private final List<CommentEntity> comments;
+
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+    private final List<Chat_TeamEntity> chats;
+
     public UserEntity() {
         this.routes = new ArrayList<>();
+        this.reactions = new ArrayList<>();
+        this.comments = new ArrayList<>();
+        this.chats = new ArrayList<>();
     
     }
 
     public UserEntity(Long id) {
 
         this.routes = new ArrayList<>();
-    
+        this.reactions = new ArrayList<>();
+        this.comments = new ArrayList<>();
+        this.chats = new ArrayList<>();
         this.id = id;
     }
 
@@ -170,12 +178,29 @@ public class UserEntity implements Serializable {
         return routes.size();
     }
 
+    public int getReactions() {
+        return reactions.size();
+    }
+
+
+    public int getComments() {
+        return comments.size();
+    }
+
+    public int getChats() {
+        return chats.size();
+    }
     
     
     @PreRemove
     public void nullify() {
         this.routes.forEach(c -> c.setUser(null));
+        this.reactions.forEach(c -> c.setUser(null));
+        this.comments.forEach(c -> c.setUser(null));
+        this.chats.forEach(c -> c.setUser(null));
         
     }
+
+   
 
 }

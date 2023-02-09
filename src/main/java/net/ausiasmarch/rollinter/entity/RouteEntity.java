@@ -51,13 +51,23 @@ public class RouteEntity {
     @JoinColumn(name = "id_user")
     private UserEntity user;
 
+    @OneToMany(mappedBy = "route", fetch = FetchType.LAZY)
+    private final List <ReactionEntity> reactions;
+
+    @OneToMany(mappedBy = "route", fetch = FetchType.LAZY)
+    private final List<CommentEntity> comments;
+
     public RouteEntity() {
         this.coordinates = new ArrayList<>();
+        this.reactions = new ArrayList<>();
+        this.comments = new ArrayList<>();
     }
 
     public RouteEntity(Long id) {
         this.id = id;
         this.coordinates = new ArrayList<>();
+        this.reactions = new ArrayList<>();
+        this.comments = new ArrayList<>();
     }
 
     public Long getId() {
@@ -97,10 +107,20 @@ public class RouteEntity {
         return coordinates.size();
     }
 
+    public int getreactions() {
+        return reactions.size();
+    }
+
+    public int getComments() {
+        return comments.size();
+    }
+
 
     @PreRemove
     public void nullify() {
         this.coordinates.forEach(c -> c.setRoute(null));
+        this.reactions.forEach(c -> c.setRoute(null));
+        this.comments.forEach(c -> c.setRoute(null));
     }
 
     

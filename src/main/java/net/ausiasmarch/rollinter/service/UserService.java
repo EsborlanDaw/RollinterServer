@@ -10,6 +10,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import java.util.Date;
 
+import net.ausiasmarch.rollinter.entity.ReactionEntity;
 import net.ausiasmarch.rollinter.entity.RouteEntity;
 import net.ausiasmarch.rollinter.entity.TeamEntity;
 import net.ausiasmarch.rollinter.entity.UserEntity;
@@ -35,6 +36,15 @@ public class UserService {
 
     @Autowired
     TeamService oTeamService;
+
+    @Autowired
+    ReactionService oReactionService;
+
+    @Autowired
+    CommentService oCommentService;
+
+    @Autowired
+    Chat_TeamService oChat_TeamService;
 
     private final UsertypeRepository oUsertypeRepository;
     private final UserRepository oUserRepository;
@@ -90,7 +100,7 @@ public class UserService {
     }
 
     public UserEntity get(Long id) {
-        oAuthService.OnlyAdminsOrOwnUsersData(id);;
+        /* oAuthService.OnlyAdminsOrOwnUsersData(id); */
         try {
             return oUserRepository.findById(id).get();
         } catch (Exception ex) {
@@ -198,11 +208,16 @@ public class UserService {
         }
 
         RouteEntity oRouteEntity = oRouteRepository.findByUserId(id);
+        oReactionService.deleteByUserId(id);
+        oCommentService.deleteByUserId(id);
 
         if (oRouteEntity != null){
             oRouteService.delete(oRouteEntity.getId());
         }
 
+
+        oReactionService.deleteByUserId(id);
+        
         oUserRepository.deleteById(id);
         if (oUserRepository.existsById(id)) {
             throw new ResourceNotModifiedException("can't remove register " + id);

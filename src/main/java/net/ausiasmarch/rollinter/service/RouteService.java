@@ -30,6 +30,9 @@ public class RouteService {
 
     @Autowired
     CoordinatesService oCoordinatesService;
+    
+    @Autowired
+    ReactionService oReactionService;
 
     @Autowired
     public RouteService(RouteRepository oRouteRepository, AuthService oAuthService) {
@@ -96,6 +99,7 @@ public class RouteService {
         oAuthService.OnlyAdminsOrOwnUsersData(id);
         validate(id);
         oCoordinatesService.delete(id);
+        oReactionService.deleteByRouteId(id);
         oRouteRepository.deleteById(id);
         if (oRouteRepository.existsById(id)) {
             throw new ResourceNotModifiedException("can't remove register " + id);

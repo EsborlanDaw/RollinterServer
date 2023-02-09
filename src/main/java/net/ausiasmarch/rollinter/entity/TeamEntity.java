@@ -14,7 +14,7 @@ import javax.persistence.Table;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.List;
+import java.util.List; 
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -43,6 +43,21 @@ public class TeamEntity {
     @JoinColumn(name = "id_user")
     private UserEntity user;
 
+    @OneToMany(mappedBy = "team", fetch = FetchType.LAZY)
+    private final List<Chat_TeamEntity> chats;
+
+    public TeamEntity() {
+        this.users = new ArrayList<>();
+        this.chats = new ArrayList<>();
+    }
+
+    public TeamEntity(Long id) {
+        this.users = new ArrayList<>();
+        this.chats = new ArrayList<>();
+        this.id = id;
+    }
+
+
 
 
     public LocalDateTime getCreationdate() {
@@ -52,11 +67,6 @@ public class TeamEntity {
 
     public void setCreationdate(LocalDateTime creationdate) {
         this.creationdate = creationdate;
-    }
-
-
-    public TeamEntity() {
-        this.users = new ArrayList<>();
     }
 
    
@@ -90,10 +100,15 @@ public class TeamEntity {
         return users.size();
     }
 
+    public int getChats() {
+        return chats.size();
+    }
+
      @PreRemove
     public void nullify(){
         this.users.forEach(c ->
-                                c.setTeam(null));                  
+                                c.setTeam(null));
+        this.chats.forEach(c -> c.setTeam(null));                  
     } 
 
 
