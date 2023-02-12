@@ -42,7 +42,7 @@ public class TeamController {
 
     @GetMapping("")
     public ResponseEntity<Page<TeamEntity>> getPage(
-            @ParameterObject @PageableDefault(page = 0, size = 10, direction = Sort.Direction.DESC) Pageable oPageable,
+            @ParameterObject @PageableDefault(page = 0, size = 10, direction = Sort.Direction.ASC) Pageable oPageable,
             @RequestParam(name = "filter", required = false) String strFilter,
             @RequestParam(name = "developer", required = false) Long lDeveloper) {
         return new ResponseEntity<Page<TeamEntity>>(oTeamService.getPage(oPageable, strFilter, lDeveloper), HttpStatus.OK);

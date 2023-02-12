@@ -13,6 +13,7 @@ import net.ausiasmarch.rollinter.entity.CoordinatesEntity;
 import net.ausiasmarch.rollinter.entity.RouteEntity;
 import net.ausiasmarch.rollinter.exception.ResourceNotFoundException;
 import net.ausiasmarch.rollinter.exception.ResourceNotModifiedException;
+import net.ausiasmarch.rollinter.helper.RandomHelper;
 import net.ausiasmarch.rollinter.helper.ValidationHelper;
 import net.ausiasmarch.rollinter.repository.CoordinatesRepository;
 import net.ausiasmarch.rollinter.repository.RouteRepository;
@@ -116,6 +117,24 @@ public class CoordinatesService {
             oCoordinatesRepository.deleteById(coordi.get(i).getId());
         }
         }
+
+    }
+
+    public void  generateCoordinates (RouteEntity oRouteEntity)
+    {
+        List <CoordinatesEntity> coords = new ArrayList ();
+        CoordinatesEntity oCoordinatesEntity = new CoordinatesEntity();
+
+        for (int i = 0; i < 11; i++) {
+            
+            oCoordinatesEntity.setX(RandomHelper.getRandomDouble(39.445933, 39.4697500) + "");
+            oCoordinatesEntity.setY(RandomHelper.getRandomDouble(-0.355852, -0.287802) + "");
+            oCoordinatesEntity.setRoute(oRouteEntity);
+            coords.add(i, oCoordinatesEntity);
+            
+        }
+
+        oCoordinatesRepository.saveAll(coords);
 
     }
 

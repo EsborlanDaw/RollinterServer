@@ -21,5 +21,6 @@ public interface TeamRepository extends JpaRepository<TeamEntity, Long> {
 
     Page<TeamEntity> findByUserId(long lUser, Pageable oPageable);
     public boolean existsByName(String name);
+    public boolean findByUserId(Long user);
 
 }

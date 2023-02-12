@@ -70,12 +70,12 @@ public class RandomHelper {
         return Character.toUpperCase(c);
     }
 
-    public static double getRadomDouble(int rangeMin, int rangeMax) {
+    public static double getRandomDouble(int rangeMin, int rangeMax) {
         Random r = new Random();
         return rangeMin + (rangeMax - rangeMin) * r.nextDouble();
     }
 
-    public static double getRadomDouble(double minValue, double maxValue) {
+    public static double getRandomDouble(double minValue, double maxValue) {
         return Math.round(ThreadLocalRandom.current().nextDouble(minValue, maxValue) * 100d) / 100d;
     }
 }

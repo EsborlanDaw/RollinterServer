@@ -152,7 +152,6 @@ public class UserService {
     }
 
     public Long count() {
-        oAuthService.OnlyAdmins();
         return oUserRepository.count();
     }
 
@@ -179,7 +178,7 @@ public class UserService {
     }
 
     public Long create(UserEntity oNewUserEntity) {
-        oAuthService.OnlyAdminsOrUsers();
+        
         validate(oNewUserEntity);
         oNewUserEntity.setId(0L);
         oNewUserEntity.setPassword(ROLLINTER_DEFAULT_PASSWORD);
@@ -216,8 +215,6 @@ public class UserService {
             oRouteService.delete(oRouteEntity.getId());
         }
 
-
-        oReactionService.deleteByUserId(id);
         
         oUserRepository.deleteById(id);
         if (oUserRepository.existsById(id)) {

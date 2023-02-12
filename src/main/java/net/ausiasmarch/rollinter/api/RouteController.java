@@ -63,5 +63,10 @@ public class RouteController {
         return new ResponseEntity<Long>(oRouteService.delete(id), HttpStatus.OK);
     }
 
+    @PostMapping("/generate/{amount}")
+    public ResponseEntity<Long> generateSome(@PathVariable Long amount) {
+        return new ResponseEntity<>(oRouteService.generateSome(amount), HttpStatus.OK);
+    }
+
     
 }

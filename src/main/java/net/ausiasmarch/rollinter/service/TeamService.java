@@ -7,6 +7,7 @@ import net.ausiasmarch.rollinter.exception.ResourceNotFoundException;
 import net.ausiasmarch.rollinter.exception.ResourceNotModifiedException;
 import net.ausiasmarch.rollinter.exception.ValidationException;
 import net.ausiasmarch.rollinter.helper.RandomHelper;
+import net.ausiasmarch.rollinter.helper.UsertypeHelper;
 import net.ausiasmarch.rollinter.helper.ValidationHelper;
 import net.ausiasmarch.rollinter.repository.UserRepository;
 import net.bytebuddy.asm.Advice.Local;
@@ -57,8 +58,8 @@ public class TeamService {
     }
 
     public void validate(TeamEntity oTeamEntity) {
-        ValidationHelper.validateLogin(oTeamEntity.getName(),
-                "campo name de name (el campo debe tener longitud de 2 a 50 caracteres)");
+        ValidationHelper.validateStringLength(oTeamEntity.getName(), 2, 50,
+                "campo name: (el campo debe tener longitud de 2 a 50 caracteres y no tener espacios)");
         if(oTeamRepository.existsByName(oTeamEntity.getName())){
             throw new ValidationException("Name exists, choose another name");
         }
@@ -75,9 +76,8 @@ public class TeamService {
         oAuthService.OnlyAdmins();
         validate(id);
         oUserService.updateTeam(oTeamRepository.getById(id));
-        oTeamRepository.deleteById(id);
         oChat_TeamService.deleteByTeamId(id);
-
+        oTeamRepository.deleteById(id);
         if (oTeamRepository.existsById(id)) {
             throw new ResourceNotModifiedException("Can't remove register " + id);
         } else {
@@ -105,14 +105,21 @@ public class TeamService {
     }
 
     public Long create(TeamEntity oNewTeamEntity) {
+
+        UserEntity oUserEntity = oUserRepository.getById(oNewTeamEntity.getUser());
+
+        if (oTeamRepository.getByUserId(oUserEntity.getId()) != null && oUserEntity.getUsertype().getId() != UsertypeHelper.ADMIN){
+            throw new ResourceNotModifiedException("You are already in a team");
+        } else{
         oAuthService.OnlyAdminsOrUsers();
         validate(oNewTeamEntity);
         oNewTeamEntity.setCreationdate(LocalDateTime.now());
         oTeamRepository.save(oNewTeamEntity);
-        UserEntity oUserEntity = oUserRepository.getById(oTeamRepository.getByUserId(oNewTeamEntity.getUser()).getUser());
+        oTeamRepository.getByUserId(oNewTeamEntity.getUser()).getUser();
         oUserEntity.setTeam(oNewTeamEntity);
         oUserRepository.save(oUserEntity);
         return oNewTeamEntity.getId();
+        }
     }
 
     public Long count() {

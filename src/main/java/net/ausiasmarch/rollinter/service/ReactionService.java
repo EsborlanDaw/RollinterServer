@@ -141,7 +141,7 @@ public class ReactionService {
     
 
     public Long delete(Long id) {
-        oAuthService.OnlyAdminsOrOwnUsersData(id);
+        oAuthService.OnlyAdminsOrUsers();
         validate(id);
         if (!oReactionRepository.existsById(id)) {
             throw new ResourceNotModifiedException("can't remove register " + id);
