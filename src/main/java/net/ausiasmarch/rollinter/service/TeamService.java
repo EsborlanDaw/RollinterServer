@@ -68,7 +68,7 @@ public class TeamService {
 
     public void validate(Long id) {
         if (!oTeamRepository.existsById(id)) {
-            throw new ResourceNotFoundException("Id " + id + " not exist");
+            throw new ValidationException("Id " + id + " not exist");
         }
     }
 
@@ -79,7 +79,7 @@ public class TeamService {
         oChat_TeamService.deleteByTeamId(id);
         oTeamRepository.deleteById(id);
         if (oTeamRepository.existsById(id)) {
-            throw new ResourceNotModifiedException("Can't remove register " + id);
+            throw new ValidationException("Can't remove register " + id);
         } else {
             return id;
         }
@@ -109,7 +109,7 @@ public class TeamService {
         UserEntity oUserEntity = oUserRepository.getById(oNewTeamEntity.getUser());
 
         if (oTeamRepository.getByUserId(oUserEntity.getId()) != null && oUserEntity.getUsertype().getId() != UsertypeHelper.ADMIN){
-            throw new ResourceNotModifiedException("You are already in a team");
+            throw new ValidationException("You are already in a team, if you want you can change your team in your profile");
         } else{
         oAuthService.OnlyAdminsOrUsers();
         validate(oNewTeamEntity);
@@ -153,7 +153,7 @@ public class TeamService {
             oTeamEntity = oTeamRepository.getById(TeamList.get(0).getId());
             return oTeamEntity;
         } else {
-            throw new CannotPerformOperationException("There is not user in data base");
+            throw new ValidationException("There is not user in data base");
         }
     }
 
@@ -209,7 +209,7 @@ public class TeamService {
             }
 
         } else {
-            throw new CannotPerformOperationException(
+            throw new ValidationException(
                     "There is enough users in data base to create " + amount + " teams");
         }
 

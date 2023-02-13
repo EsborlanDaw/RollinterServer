@@ -218,7 +218,7 @@ public class UserService {
         
         oUserRepository.deleteById(id);
         if (oUserRepository.existsById(id)) {
-            throw new ResourceNotModifiedException("can't remove register " + id);
+            throw new ValidationException("can't remove register " + id);
         } else {
             return id;
         }
@@ -236,7 +236,7 @@ public class UserService {
             oUserEntity = oUserRepository.getById(UserList.get(0).getId());
             return oUserEntity;
         } else {
-            throw new CannotPerformOperationException("There is not user in data base");
+            throw new ValidationException("There is not user in data base");
         }
     }
 

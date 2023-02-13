@@ -52,7 +52,7 @@ public class RouteService {
 
     public void validate(Long id) {
         if (!oRouteRepository.existsById(id)) {
-            throw new ResourceNotFoundException("id " + id + " not exist");
+            throw new ValidationException("id " + id + " not exist");
         }
     }
 
@@ -64,7 +64,7 @@ public class RouteService {
 
     public RouteEntity get(Long id) {
         return oRouteRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Route with id: " + id + " not found"));
+                .orElseThrow(() -> new ValidationException("Route with id: " + id + " not found"));
     }
 
     public Long count() {
@@ -113,7 +113,7 @@ public class RouteService {
         oCommentService.deleteByRouteId(id);
         oRouteRepository.deleteById(id);
         if (oRouteRepository.existsById(id)) {
-            throw new ResourceNotModifiedException("can't remove register " + id);
+            throw new ValidationException("can't remove register " + id);
         } else {
             return id;
         }
@@ -157,7 +157,7 @@ public class RouteService {
         }
 
         } else {
-            throw new CannotPerformOperationException(
+            throw new ValidationException(
                     "There is enough users in data base to create " + amount + " routes");
         }
 

@@ -32,7 +32,7 @@ public class Chat_TeamService {
 
     public void validate(Long id) {
         if (!oChat_TeamRepository.existsById(id)) {
-            throw new ResourceNotFoundException("id " + id + " not exist");
+            throw new ValidationException("id " + id + " not exist");
         }
     }
 
@@ -121,7 +121,7 @@ public class Chat_TeamService {
             return id;
             
         } else {
-            throw new ResourceNotModifiedException("can't remove register " + id + " because you have not written it");
+            throw new ValidationException("can't remove register " + id + " because you have not written it");
             
         }
     }

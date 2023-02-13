@@ -40,7 +40,7 @@ public class CommentService {
 
     public void validate(Long id) {
         if (!oCommentRepository.existsById(id)) {
-            throw new ResourceNotFoundException("id " + id + " not exist");
+            throw new ValidationException("id " + id + " not exist");
         }
     }
 
@@ -144,7 +144,7 @@ public class CommentService {
         } 
 
         if (oCommentRepository.existsById(id)) {
-            throw new ResourceNotModifiedException(oCommentEntity.getUser().getId()+ " can't remove register " + id + " because you have not written it " + id_user);
+            throw new ValidationException(oCommentEntity.getUser().getId()+ " can't remove register " + id + " because you have not written it " + id_user);
         } else {
             return id;
         } 
