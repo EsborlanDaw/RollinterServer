@@ -50,8 +50,8 @@ public class Chat_TeamService {
 
     public Page<Chat_TeamEntity> getPage(Pageable oPageable, String strFilter, Long id_team, Long id_user) {
         oAuthService.OnlyAdminsOrUsers();
-        oPageable.withPage((int)oChat_TeamRepository.count());
-        ValidationHelper.validateRPP(oPageable.getPageSize());
+        oPageable = Pageable.unpaged();
+       
         if (strFilter == null || strFilter.length() == 0) {
             if (id_user == null) {
                 if (id_team == null) {

@@ -87,8 +87,10 @@ public class UserService {
                 "campo name de User(el campo debe tener longitud de 2 a 50 caracteres)");
         ValidationHelper.validateStringLength(oUserEntity.getSurname1(), 2, 50,
                 "campo surname de User(el campo debe tener longitud de 2 a 50 caracteres)");
-        ValidationHelper.validateStringLength(oUserEntity.getSurname2(), 2, 50,
-                "campo lastname de User(el campo debe tener longitud de 2 a 50 caracteres)");
+        if (oUserEntity.getSurname2() != null && !oUserEntity.getSurname2().equalsIgnoreCase("")) {
+            ValidationHelper.validateStringLength(oUserEntity.getSurname2(), 2, 50,
+                    "campo lastname de User(el campo debe tener longitud de 2 a 50 caracteres)");
+        }
         ValidationHelper.validateYears(oUserEntity.getDatebirth());
         ValidationHelper.validateEmail(oUserEntity.getEmail(), "campo email de User");
         ValidationHelper.validateLogin(oUserEntity.getUsername(), "campo username de User");
@@ -130,7 +132,7 @@ public class UserService {
                 if (id_usertype == null) {
                     return oUserRepository
                             .findByNameIgnoreCaseContainingOrSurname1IgnoreCaseContainingOrSurname2IgnoreCaseContainingOrUsernameIgnoreCaseContainingOrEmailIgnoreCaseContaining(
-                                    strFilter, strFilter, strFilter,strFilter, strFilter, oPageable);
+                                    strFilter, strFilter, strFilter, strFilter, strFilter, oPageable);
                 } else {
                     return oUserRepository
                             .findByNameIgnoreCaseContainingOrSurname1IgnoreCaseContainingOrSurname2IgnoreCaseContainingAndUsertypeId(
@@ -164,7 +166,7 @@ public class UserService {
     }
 
     public void updateTeam(TeamEntity oTeamEntity) {
-       
+
         List<UserEntity> oUserEntities = new ArrayList();
 
         if (oUserRepository.existsByTeamId((oTeamEntity.getId()))) {
@@ -178,7 +180,7 @@ public class UserService {
     }
 
     public Long create(UserEntity oNewUserEntity) {
-        
+
         validate(oNewUserEntity);
         oNewUserEntity.setId(0L);
         oNewUserEntity.setPassword(ROLLINTER_DEFAULT_PASSWORD);
@@ -211,11 +213,10 @@ public class UserService {
         oCommentService.deleteByUserId(id);
         oChat_TeamService.deleteByUserId(id);
 
-        if (oRouteEntity != null){
+        if (oRouteEntity != null) {
             oRouteService.delete(oRouteEntity.getId());
         }
 
-        
         oUserRepository.deleteById(id);
         if (oUserRepository.existsById(id)) {
             throw new ValidationException("can't remove register " + id);
@@ -241,7 +242,7 @@ public class UserService {
     }
 
     private UserEntity generateUser() {
-        
+
         UserEntity oUserEntity = new UserEntity();
 
         oUserEntity.setName(names.get(RandomHelper.getRandomInt(0, names.size() - 1)));
@@ -249,7 +250,7 @@ public class UserService {
         oUserEntity.setSurname2(surnames2.get(RandomHelper.getRandomInt(0, names.size() - 1)));
 
         oUserEntity.setUsername((oUserEntity.getName().toLowerCase()
-                + oUserEntity.getSurname1().toLowerCase())+ ""
+                + oUserEntity.getSurname1().toLowerCase()) + ""
                 + RandomHelper.getRandomInt(0, 300000));
         oUserEntity.setEmail(oUserEntity.getUsername() + "@rollinter.net");
         oUserEntity.setGender(gender.get(RandomHelper.getRandomInt(0, 1)));

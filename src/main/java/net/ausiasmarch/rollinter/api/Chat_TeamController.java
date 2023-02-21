@@ -35,7 +35,7 @@ public class Chat_TeamController {
 
     @GetMapping
     public ResponseEntity<Page<Chat_TeamEntity>> getPage(
-            @ParameterObject @PageableDefault(page = 0, size = 10, direction = Sort.Direction.ASC) Pageable oPageable,
+            @ParameterObject @PageableDefault(page = 0, direction = Sort.Direction.ASC) Pageable oPageable,
             @RequestParam(name = "filter", required = false) String strFilter,
             @RequestParam(value = "team", required = false) Long id_team,
             @RequestParam(value = "user", required = false) Long id_user) {
