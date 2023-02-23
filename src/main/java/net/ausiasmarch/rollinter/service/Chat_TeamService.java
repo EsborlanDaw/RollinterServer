@@ -127,7 +127,7 @@ public class Chat_TeamService {
     }
 
     public Long deleteByTeamId(Long id) {
-        oAuthService.OnlyAdminsOrOwnUsersData(id);
+        
         List<Chat_TeamEntity> oChat_TeamEntities = oChat_TeamRepository.findByTeamId(id);
 
         if (oChat_TeamEntities.size() != 0) {

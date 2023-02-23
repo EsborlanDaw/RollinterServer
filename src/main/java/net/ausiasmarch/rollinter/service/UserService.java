@@ -163,6 +163,7 @@ public class UserService {
         UserEntity oOldUserEntity = oUserRepository.getById(oUserEntity.getId());
         oUserEntity.setPassword(oOldUserEntity.getPassword());
         return oUserRepository.save(oUserEntity).getId();
+        
     }
 
     public void updateTeam(TeamEntity oTeamEntity) {

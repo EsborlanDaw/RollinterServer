@@ -2,28 +2,23 @@ package net.ausiasmarch.rollinter.service;
 
 import net.ausiasmarch.rollinter.entity.TeamEntity;
 import net.ausiasmarch.rollinter.entity.UserEntity;
-import net.ausiasmarch.rollinter.exception.CannotPerformOperationException;
 import net.ausiasmarch.rollinter.exception.ResourceNotFoundException;
-import net.ausiasmarch.rollinter.exception.ResourceNotModifiedException;
 import net.ausiasmarch.rollinter.exception.ValidationException;
 import net.ausiasmarch.rollinter.helper.RandomHelper;
 import net.ausiasmarch.rollinter.helper.UsertypeHelper;
 import net.ausiasmarch.rollinter.helper.ValidationHelper;
 import net.ausiasmarch.rollinter.repository.UserRepository;
-import net.bytebuddy.asm.Advice.Local;
 import net.ausiasmarch.rollinter.repository.TeamRepository;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.stereotype.Service;
 
 @Service
 public class TeamService {
@@ -83,6 +78,23 @@ public class TeamService {
         } else {
             return id;
         }
+    }
+
+    public Long deleteByUser(Long id, Long id_user) {
+
+        TeamEntity oTeamEntity = oTeamRepository.getById(id);
+        UserEntity oUserEntity = oUserRepository.getById(id_user);
+        if (oUserEntity.getUsertype().getId() == UsertypeHelper.ADMIN || oTeamEntity.getUser() == oUserEntity.getId()) {
+            oUserService.updateTeam(oTeamRepository.getById(id));
+            oChat_TeamService.deleteByTeamId(id);
+            oTeamRepository.deleteById(oTeamEntity.getId());
+        } 
+
+        if (oTeamRepository.existsById(id)) {
+            throw new ValidationException(oTeamEntity.getUser()+ " can't remove register " + id + " because you have not written it " + id_user);
+        } else {
+            return id;
+        } 
     }
 
     public Page<TeamEntity> getPage(Pageable oPageable, String strFilter, Long lUser) {

@@ -40,6 +40,11 @@ public class TeamController {
         return oTeamService.delete(id);
     }
 
+    @DeleteMapping("/{id}/{id_user}")
+    public ResponseEntity<Long> getValues(@PathVariable (value = "id") Long id, @PathVariable (value = "id_user") Long id_user) {
+        return new ResponseEntity<Long>(oTeamService.deleteByUser(id, id_user), HttpStatus.OK);
+    }
+
     @GetMapping("")
     public ResponseEntity<Page<TeamEntity>> getPage(
             @ParameterObject @PageableDefault(page = 0, size = 10, direction = Sort.Direction.ASC) Pageable oPageable,
