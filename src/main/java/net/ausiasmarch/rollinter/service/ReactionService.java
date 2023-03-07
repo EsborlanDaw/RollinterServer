@@ -152,7 +152,7 @@ public class ReactionService {
     }
 
     public Long deleteByRouteId(Long id) {
-        oAuthService.OnlyAdminsOrOwnUsersData(id);
+        
         List<ReactionEntity> oReactionEntities = oReactionRepository.findByRouteId(id);
 
         if (oReactionEntities.size() != 0) {

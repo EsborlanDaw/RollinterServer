@@ -105,8 +105,6 @@ public class CoordinatesService {
     }
 
     public void delete(Long id) {
-        
-        oAuthService.OnlyAdminsOrOwnUsersData(id);
     
         List <CoordinatesEntity> coordi = new ArrayList();
 

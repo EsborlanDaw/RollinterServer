@@ -151,7 +151,7 @@ public class CommentService {
     }
 
     public Long deleteByRouteId(Long id) {
-        oAuthService.OnlyAdminsOrOwnUsersData(id);
+        
         List<CommentEntity> oCommentEntities = oCommentRepository.findByRouteId(id);
 
         if (oCommentEntities.size() != 0) {

@@ -1,6 +1,5 @@
 package net.ausiasmarch.rollinter.service;
 
-
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,11 +14,11 @@ import net.ausiasmarch.rollinter.exception.CannotPerformOperationException;
 import net.ausiasmarch.rollinter.exception.ResourceNotFoundException;
 import net.ausiasmarch.rollinter.exception.ResourceNotModifiedException;
 import net.ausiasmarch.rollinter.helper.RandomHelper;
+import net.ausiasmarch.rollinter.helper.UsertypeHelper;
 import net.ausiasmarch.rollinter.helper.ValidationHelper;
 import net.ausiasmarch.rollinter.repository.RouteRepository;
 import net.ausiasmarch.rollinter.repository.UserRepository;
 import net.ausiasmarch.rollinter.exception.ValidationException;
-
 
 @Service
 public class RouteService {
@@ -37,7 +36,7 @@ public class RouteService {
 
     @Autowired
     CoordinatesService oCoordinatesService;
-    
+
     @Autowired
     ReactionService oReactionService;
 
@@ -57,9 +56,10 @@ public class RouteService {
     }
 
     public void validate(RouteEntity oRouteEntity) {
-        //Validar dificultad y tiempo
-        ValidationHelper.validateStringLength(oRouteEntity.getName(), 2, 50, "campo name de Route(el campo debe tener longitud de 2 a 50 caracteres)");
-        
+        // Validar dificultad y tiempo
+        ValidationHelper.validateStringLength(oRouteEntity.getName(), 2, 50,
+                "campo name de Route(el campo debe tener longitud de 2 a 50 caracteres)");
+
     }
 
     public RouteEntity get(Long id) {
@@ -68,7 +68,7 @@ public class RouteService {
     }
 
     public Long count() {
-        //oAuthService.OnlyAdmins();
+        // oAuthService.OnlyAdmins();
         return oRouteRepository.count();
     }
 
@@ -77,18 +77,17 @@ public class RouteService {
         ValidationHelper.validateRPP(oPageable.getPageSize());
         if (strFilter == null || strFilter.length() == 0) {
             if (id_user == null) {
-                    return oRouteRepository.findAll(oPageable);
-                } else {
-                    return oRouteRepository.findByUserId(id_user, oPageable);
-            }
-            } else if (strFilter != null || strFilter.length() != 0) {
-                return oRouteRepository.findByNameContainingIgnoreCaseOrDificultyContainingIgnoreCase(strFilter, strFilter, oPageable);
-            }else {
                 return oRouteRepository.findAll(oPageable);
+            } else {
+                return oRouteRepository.findByUserId(id_user, oPageable);
             }
+        } else if (strFilter != null || strFilter.length() != 0) {
+            return oRouteRepository.findByNameContainingIgnoreCaseOrDificultyContainingIgnoreCase(strFilter, strFilter,
+                    oPageable);
+        } else {
+            return oRouteRepository.findAll(oPageable);
+        }
     }
-
-
 
     public Long update(RouteEntity oRouteEntity) {
         validate(oRouteEntity.getId());
@@ -98,8 +97,8 @@ public class RouteService {
 
     public Long create(RouteEntity oNewRouteEntity) {
         oAuthService.OnlyAdminsOrUsers();
-        //Para crear una ruta tienes que introducir coordenadas
-        
+        // Para crear una ruta tienes que introducir coordenadas
+
         oNewRouteEntity.setId(0L);
         validate(oNewRouteEntity);
         return oRouteRepository.save(oNewRouteEntity).getId();
@@ -119,15 +118,32 @@ public class RouteService {
         }
     }
 
-    
+    public Long deleteByUser(Long id, Long id_user) {
 
+        RouteEntity oRouteEntity = oRouteRepository.getById(id);
+        UserEntity oUserEntity = oUserRepository.getById(id_user);
+        if (oUserEntity.getUsertype().getId() == UsertypeHelper.ADMIN
+                || oRouteEntity.getUser().getId() == oUserEntity.getId()) {
+            oCoordinatesService.delete(id);
+            oReactionService.deleteByRouteId(id);
+            oCommentService.deleteByRouteId(id);
+            oRouteRepository.deleteById(id);
+        }
+
+        if (oRouteRepository.existsById(id)) {
+            throw new ValidationException(oRouteEntity.getUser().getId() + " can't remove register " + id
+                    + " because you have not written it " + id_user);
+        } else {
+            return id;
+        }
+    }
 
     private RouteEntity generateRoute() {
 
         oAuthService.OnlyAdmins();
         RouteEntity oRouteEntity = new RouteEntity();
 
-        oRouteEntity.setName("Rollroute"+ RandomHelper.getRandomInt(0, 300000));
+        oRouteEntity.setName("Rollroute" + RandomHelper.getRandomInt(0, 300000));
 
         List<UserEntity> user = oUserRepository.findAll();
 
@@ -140,11 +156,9 @@ public class RouteService {
         oRouteRepository.save(oRouteEntity);
 
         oCoordinatesService.generateCoordinates(oRouteEntity);
-        
+
         return oRouteEntity;
     }
-
-   
 
     public Long generateSome(Long amount) {
         oAuthService.OnlyAdmins();
@@ -152,9 +166,9 @@ public class RouteService {
         int total = users.size();
         if (total >= amount) {
 
-        for (int i = 0; i < amount; i++) {
+            for (int i = 0; i < amount; i++) {
                 generateRoute();
-        }
+            }
 
         } else {
             throw new ValidationException(
@@ -163,5 +177,5 @@ public class RouteService {
 
         return oRouteRepository.count();
     }
-    
+
 }

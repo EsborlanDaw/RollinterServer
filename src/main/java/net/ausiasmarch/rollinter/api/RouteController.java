@@ -63,6 +63,11 @@ public class RouteController {
         return new ResponseEntity<Long>(oRouteService.delete(id), HttpStatus.OK);
     }
 
+    @DeleteMapping("/{id}/{id_user}")
+    public ResponseEntity<Long> getValues(@PathVariable (value = "id") Long id, @PathVariable (value = "id_user") Long id_user) {
+        return new ResponseEntity<Long>(oRouteService.deleteByUser(id, id_user), HttpStatus.OK);
+    }
+
     @PostMapping("/generate/{amount}")
     public ResponseEntity<Long> generateSome(@PathVariable Long amount) {
         return new ResponseEntity<>(oRouteService.generateSome(amount), HttpStatus.OK);

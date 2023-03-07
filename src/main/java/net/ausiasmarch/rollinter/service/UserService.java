@@ -161,9 +161,12 @@ public class UserService {
         validate(oUserEntity.getId());
         oAuthService.OnlyAdminsOrOwnUsersData(oUserEntity.getId());
         UserEntity oOldUserEntity = oUserRepository.getById(oUserEntity.getId());
-        oUserEntity.setPassword(oOldUserEntity.getPassword());
-        return oUserRepository.save(oUserEntity).getId();
+        oUserEntity.setPassword(oOldUserEntity.getPassword()); 
+        oUserRepository.save(oUserEntity).getId();
+        oTeamService.deleteEmptyTeam(oOldUserEntity.getTeam());
         
+        return oUserEntity.getId();
+          
     }
 
     public void updateTeam(TeamEntity oTeamEntity) {

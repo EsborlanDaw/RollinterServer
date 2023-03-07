@@ -97,6 +97,15 @@ public class TeamService {
         } 
     }
 
+    public void deleteEmptyTeam (TeamEntity oTeamEntity) {
+
+        if (oTeamEntity.getUsers() == 0 && oTeamEntity.getId() != 1 )
+        {
+            delete(oTeamEntity.getId());
+        }
+
+    }
+
     public Page<TeamEntity> getPage(Pageable oPageable, String strFilter, Long lUser) {
         Page<TeamEntity> oPage = null;
         oAuthService.OnlyAdminsOrUsers();
