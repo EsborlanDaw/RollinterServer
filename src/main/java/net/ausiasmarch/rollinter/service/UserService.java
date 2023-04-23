@@ -187,7 +187,7 @@ public class UserService {
 
         validate(oNewUserEntity);
         oNewUserEntity.setId(0L);
-        oNewUserEntity.setPassword(ROLLINTER_DEFAULT_PASSWORD);
+        /* oNewUserEntity.setPassword(ROLLINTER_DEFAULT_PASSWORD); */
         oNewUserEntity.setTeam(oTeamRepository.getById(ROLLINTER_DEFAULT_TEAM));
         return oUserRepository.save(oNewUserEntity).getId();
     }
